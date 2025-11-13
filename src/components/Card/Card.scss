@@ -1,0 +1,49 @@
+.card {
+  border: 1px solid #292828;
+  background-color: #ffffff;
+  width: 400px;
+  height: 55px;
+  border-radius: 7px;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  margin-top: 10px;
+
+  .card__checkbox {
+    border: 10px solid #292828;
+  }
+
+  .card__input {
+    border: none;
+    width: 250px;
+  }
+
+  .card__btns {
+    display: flex;
+    align-items: center;
+  }
+
+  .card__btns__btn {
+    width: 45px;
+    height: 45px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+  }
+
+
+}
+
+.checked {
+  text-decoration: line-through;
+}
+
+.inactive {
+  display: none !important;
+}
+
+.pointer-none {
+  pointer-events: none;
+}
+
