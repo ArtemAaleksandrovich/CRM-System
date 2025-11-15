@@ -1,27 +1,29 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import './App.scss'
 import Header from './components/Header/index.jsx'
-import Index from './components/Card/index.jsx'
-import { Routes, Route, Link } from 'react-router-dom'
+import Card from './components/Card/index.jsx'
 
 function App() {
     const [items, setItems] = useState([])
+    const [status, setStatus] = useState('all')
+    const [all, setAll] = useState(0)
+    const [inWork, setInWork] = useState(0)
+    const [done, setDone] = useState(0)
 
-    const inWork = items.filter((item) => (item.isDone === false))
-    const done = items.filter((item) => (item.isDone === true))
-
-    React.useEffect(() => {
+    useEffect(() => {
         render()
-    }, []);
+    }, [status]);
 
     const render = () => {
-        fetch('https://easydev.club/api/v1/todos')
+        fetch(`https://easydev.club/api/v1/todos?filter=${status}`)
             .then(res => res.json())
             .then((response) => {
                 setItems(response.data);
-            });
+                setAll(response.info.all);
+                setInWork(response.info.inWork);
+                setDone(response.info.completed);
+            })
     }
-
     const onCreateCard = (obj) => {
         const { title, isDone } = obj;
         const requestOptions = {
@@ -31,7 +33,8 @@ function App() {
         };
         fetch(`https://easydev.club/api/v1/todos`, requestOptions)
             .then(res => res.json())
-            .then(res => setItems(prev => [...prev, res]));
+            .then(res => setItems(prev => [...prev, res]))
+            .then(() => render())
     }
 
     const onUpdateCard = (obj) => {
@@ -42,8 +45,8 @@ function App() {
             body: JSON.stringify({ title, isDone })
         };
         fetch(`https://easydev.club/api/v1/todos/${obj.id}`, requestOptions)
-        .then(res => res.json())
-        .then(() => render())
+            .then(res => res.json())
+            .then(() => render())
     }
 
 
@@ -52,48 +55,10 @@ function App() {
             method: 'DELETE'
         };
         fetch(`https://easydev.club/api/v1/todos/${id}`, requestOptions)
-        setItems(prev => prev.filter(item => item.id !== id))
-
+            .then(() => setItems(prev => prev.filter(item => item.id !== id)))
+            .then(() => render())
     }
 
-    const AllCards = () => {
-        return ((items.map((item) => (
-            <Index
-                key={item.id}
-                id={item.id}
-                title={item.title}
-                onUpdate={(obj) => onUpdateCard(obj)}
-                onDelete={(id) => onDeleteCard(id)}
-                isDone={item.isDone}
-            />
-        ))))
-    }
-    const InWorkCards = () => {
-        return (inWork.map((item) => (
-                <Index
-                    key={item.id}
-                    id={item.id}
-                    title={item.title}
-                    onUpdate={(obj) => onUpdateCard(obj)}
-                    onDelete={(id) => onDeleteCard(id)}
-                    isDone={item.isDone}
-                />
-            ))
-        )
-    }
-    const DoneCards = () => {
-        return (done.map((item) => (
-                <Index
-                    key={item.id}
-                    id={item.id}
-                    title={item.title}
-                    onUpdate={(obj) => onUpdateCard(obj)}
-                    onDelete={(id) => onDeleteCard(id)}
-                    isDone={item.isDone}
-                />
-            ))
-        )
-    }
 
   return (
       <>
@@ -103,15 +68,22 @@ function App() {
                   onCreate={(obj) => onCreateCard(obj)}
               />
               <nav>
-                  <Link className="link" to="/">Все({items.length})</Link>
-                  <Link className="link" to="/work">В работе({inWork.length})</Link>
-                  <Link className="link" to="/done">Сделано({done.length})</Link>
+                  <button className="nav__button" onClick={() => setStatus('all')}>Все({all})</button>
+                  <button className="nav__button" onClick={() => setStatus('inWork')}>В работе({inWork})</button>
+                  <button className="nav__button" onClick={() => setStatus('completed')}>Сделано({done})</button>
               </nav>
-              <Routes>
-                  <Route path="/" element={<AllCards />} />
-                  <Route path="/work" element={<InWorkCards />} />
-                  <Route path="/done" element={<DoneCards />} />
-              </Routes>
+              {
+                  items.map((item) => (
+                      <Card
+                          key={item.id}
+                          id={item.id}
+                          title={item.title}
+                          onUpdate={(obj) => onUpdateCard(obj)}
+                          onDelete={(id) => onDeleteCard(id)}
+                          isDone={item.isDone}
+                      />
+                  ))
+              }
           </div>
       </>
   )

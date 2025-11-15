@@ -11,9 +11,9 @@ function Header({ onCreate }) {
 
     const onAdd = () => {
         {
-            title.length > 0 ?
-            1 < title.length && title.length < 65 ?
-            successCreate() : alert("Текст задачи должен быть от 2 до 64 символов") : alert("Поле обязательно для заполнения")
+            title.trim().length > 0 ?
+                1 < title.length && title.length < 65 ?
+                    successCreate() : alert("Текст задачи должен быть от 2 до 64 символов") : alert("Поле обязательно для заполнения (пробелы не учитываются)")
         }
     }
 

@@ -6,14 +6,26 @@ function Index({id, title, onUpdate, onDelete, isDone}) {
     const [value, setValue] = React.useState(title);
     const [isEditing, setIsEditing] = React.useState(false);
 
+    const successCreate = () => {
+        onUpdate({id, title: value, isDone: isChecked});
+        setIsEditing(false);
+    }
+    const errorCreate = (error) => {
+        alert(error)
+        setValue(title);
+    }
+
     const onCheck = () => {
         setIsChecked(!isChecked);
         {!isEditing && onUpdate({id, title: title, isDone: !isChecked});}
     }
 
     const onSave = () => {
-        onUpdate({id, title: value, isDone: isChecked});
-        setIsEditing(false);
+        {
+            value.trim().length > 0 ?
+                1 < value.length && value.length < 65 ?
+                    successCreate() : errorCreate("Текст задачи должен быть от 2 до 64 символов") : errorCreate("Поле обязательно для заполнения (пробелы не учитываются)")
+        }
     }
 
     const onDel = () => {
