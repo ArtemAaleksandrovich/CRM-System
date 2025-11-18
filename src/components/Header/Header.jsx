@@ -1,11 +1,15 @@
 import React from 'react';
 import './Header.scss'
-function Header({ onCreate }) {
+import {onCreateCard} from '../CreateCard/CreateCard.jsx'
+
+function Header({ setItems, render }) {
     const [title, setTitle] = React.useState('');
     const isDone = false;
 
     const successCreate = () => {
-        onCreate({title, isDone});
+        onCreateCard({title, isDone })
+            .then(res => setItems(prev => [...prev, res]))
+            .then(() => render())
         setTitle('');
     }
 
@@ -22,6 +26,7 @@ function Header({ onCreate }) {
     }
     return (
         <>
+            <h1> TODO List </h1>
             <header className="header">
                 <input className={"header__input"} onChange={onChangeSearch} value={title} placeholder="Задача для выполнения..." />
                 <button className="header__btn" onClick={onAdd}>Добавить</button>
