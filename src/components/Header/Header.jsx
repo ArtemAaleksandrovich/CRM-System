@@ -1,16 +1,21 @@
 import React from 'react';
 import './Header.scss'
-import {onCreateCard} from '../CreateCard/CreateCard.jsx'
+import {post} from "../../api/api.js";
 
 function Header({ setItems, render }) {
     const [title, setTitle] = React.useState('');
     const isDone = false;
 
     const successCreate = () => {
-        onCreateCard({title, isDone })
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, isDone })
+        };
+        setTitle('');
+        return (post(requestOptions))
             .then(res => setItems(prev => [...prev, res]))
             .then(() => render())
-        setTitle('');
     }
 
     const onAdd = () => {

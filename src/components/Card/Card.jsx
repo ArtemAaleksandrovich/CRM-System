@@ -1,8 +1,7 @@
 import React from 'react';
 import './Card.scss'
-import {onUpdateCard} from '../UpdateCard/UpdateCard.jsx'
-import {onDeleteCard} from '../DeleteCard/DeleteCard.jsx'
 import ButtonList from '../ButtonList/ButtonList.jsx';
+import {put, del} from "../../api/api.js";
 
 function Card({id, title, isDone, setItems, render}) {
     const [isChecked, setIsChecked] = React.useState(isDone);
@@ -10,9 +9,14 @@ function Card({id, title, isDone, setItems, render}) {
     const [isEditing, setIsEditing] = React.useState(false);
 
     const successCreate = () => {
-        onUpdateCard({id, title: value, isDone: isChecked})
-            .then(() => render())
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: value, isDone: isChecked})
+        }
         setIsEditing(false);
+        return(put(id, requestOptions)
+            .then(() => render()))
     }
     const errorCreate = (error) => {
         alert(error)
@@ -20,8 +24,16 @@ function Card({id, title, isDone, setItems, render}) {
     }
 
     const onCheck = () => {
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: value, isDone: isChecked})
+        }
+
         setIsChecked(!isChecked);
-        {!isEditing && onUpdateCard({id, title: title, isDone: !isChecked}).then(() => render())}
+        if (!isEditing) {
+            return put(id, requestOptions).then(() => render())
+        }
     }
 
     const onSave = () => {
@@ -31,7 +43,11 @@ function Card({id, title, isDone, setItems, render}) {
     }
 
     const onDel = () => {
-        onDeleteCard(id, setItems, render)
+        const requestOptions = {
+            method: 'DELETE'
+        };
+
+        return (del(id, requestOptions))
             .then(() => setItems(prev => prev.filter(item => item.id !== id)))
             .then(() => render())
     }
