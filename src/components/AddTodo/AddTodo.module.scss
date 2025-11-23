@@ -1,23 +1,33 @@
-.header {
+.addTask {
   border-radius: 10px;
   width: 600px;
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
 
-  .header__input {
-    background-color: rgba(255, 255, 255, 0);
+  .input {
+    background-color: #ffffff00;
     border: none;
     border-bottom: 1px solid;
-    margin-top: 10px;
+    margin-top: 1rem;
     width: 300px;
     height: 40px;
     margin-right: 10px;
   }
-  .header__btn {
+
+  .button {
     border-radius: 8px;
-    margin-top: 10px;
+    width: 113px;
+    height: 43px;
+    margin-top: 1rem;
     background-color: #3596e6;
     color: white;
   }
+}
+
+.error {
+  width: 300px;
+  color: red;
+  text-align: center;
+  margin: -1rem 0 0 -8rem;
 }

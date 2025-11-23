@@ -6,16 +6,18 @@
   border-radius: 7px;
   display: flex;
   justify-content: space-between;
-  align-content: center;
-  margin-top: 10px;
+  align-items: center;
+  margin-top: 1rem;
 
-  .card__checkbox {
-    border: 10px solid #292828;
-  }
-
-  .card__input {
+  .input {
     border: none;
     width: 250px;
+    height: 45px;
+  }
+
+  .buttonList {
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -23,11 +25,13 @@
   text-decoration: line-through;
 }
 
-.inactive {
-  display: none !important;
-}
-
-.pointer-none {
+.pointerNone {
   pointer-events: none;
 }
 
+.error {
+  width: 300px;
+  color: red;
+  text-align: center;
+  margin-left: -6rem;
+}

@@ -1,39 +1,37 @@
-import Header from '../components/Header/Header.jsx'
-import CardTabs from '../components/CardTabs/CardTabs.jsx'
+import AddTodo from '../components/AddTodo/AddTodo.jsx'
+import TodoTabs from '../components/TodoTabs/TodoTabs.jsx'
 import CardList from '../components/CardList/CardList.jsx'
+import './TodoListPage.module.scss'
 import {useEffect, useState} from "react";
-import { get } from '../api/api.js'
+import { getTodosByFilter } from '../api/api.js'
 
 function TodoListPage() {
-    const [items, setItems] = useState([])
-    const [status, setStatus] = useState('all')
-    const [all, setAll] = useState(0)
-    const [inWork, setInWork] = useState(0)
-    const [done, setDone] = useState(0)
+    const [todos, setTodos] = useState([])
+    const [todoFilter, setTodoFilter] = useState('all')
+    const [todoInfo, setTodoInfo] = useState({})
 
     useEffect(() => {
-        render()
-    }, [status]);
+        getTodos()
+    }, [todoFilter]);
 
-    const render = () => {
+    const getTodos = () => {
         try {
-            get(status)
+            getTodosByFilter(todoFilter)
                 .then((response) => {
-                    setItems(response.data);
-                    setAll(response.info.all);
-                    setInWork(response.info.inWork);
-                    setDone(response.info.completed);
+                    setTodos(response.data);
+                    setTodoInfo(response.info);
                 })
-        } catch {
-            throw new Error("Ошибка в рендере страницы!");
+        } catch(error) {
+            alert("Ошибка в рендере страницы! " + error);
         }
     }
 
     return (
         <>
-            <Header setItems={setItems} render={render} />
-            <CardTabs setStatus={setStatus} all={all} inWork={inWork} done={done} />
-            <CardList items={items} setItems={setItems} render={render}/>
+            <h1> TODO List </h1>
+            <AddTodo getTodos={getTodos} />
+            <TodoTabs setTodoFilter={setTodoFilter} todoInfo={todoInfo} />
+            <CardList todos={todos} setTodos={setTodos} getTodos={getTodos}/>
         </>
     )
 }

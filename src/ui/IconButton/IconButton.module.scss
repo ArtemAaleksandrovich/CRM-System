@@ -1,0 +1,38 @@
+.button {
+  border-radius: 8px;
+  width: 45px;
+  height: 45px;
+  margin-right: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
+button {
+  border: 1px solid transparent;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+
+.primary {
+  background-color: #4ca3ec;
+}
+
+.success {
+  background-color: #64C150C6;
+}
+
+.secondary {
+  background-color: #9A9A9AAD;
+}
+
+.danger {
+  background-color: #ef4242;
+}

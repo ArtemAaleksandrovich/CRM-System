@@ -1,87 +1,103 @@
-import React from 'react';
-import './Card.scss'
-import ButtonList from '../ButtonList/ButtonList.jsx';
-import {put, del} from "../../api/api.js";
+import React, {useState} from 'react';
+import styles from './Card.module.scss'
+import {updateTodo, deleteTodo} from "../../api/api.js";
+import IconButton from "../../ui/IconButton/IconButton.jsx";
+import CheckBox from "../../ui/CheckBox/CheckBox.jsx";
 
-function Card({id, title, isDone, setItems, render}) {
-    const [isChecked, setIsChecked] = React.useState(isDone);
-    const [value, setValue] = React.useState(title);
-    const [isEditing, setIsEditing] = React.useState(false);
+function Card({id, isDone, setTodos, getTodos, ...props}) {
+    const [isChecked, setIsChecked] = useState(isDone);
+    const [title, setTitle] = useState(props.title);
+    const [isEditing, setIsEditing] = useState(false);
+    const [error, setError] = useState('');
 
-    const successCreate = () => {
-        const requestOptions = {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title: value, isDone: isChecked})
-        }
-        setIsEditing(false);
-        return(put(id, requestOptions)
-            .then(() => render()))
-    }
-    const errorCreate = (error) => {
-        alert(error)
-        setValue(title);
+    const abilityToUpdateTodo = () => {
+        updateTodo(id, title, isChecked)
+            .then(() => getTodos())
+            .then(() => setIsEditing(false))
+            .catch((error) => {
+                alert("Произошла ошибка при обновлении всей задачи: " + error.message);
+                setTitle(props.title);
+            })
     }
 
-    const onCheck = () => {
-        const requestOptions = {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title: value, isDone: isChecked})
-        }
-
-        setIsChecked(!isChecked);
+    const onCheckStatusTodo = () => {
+        setIsChecked(checked => !checked);
         if (!isEditing) {
-            return put(id, requestOptions).then(() => render())
+            updateTodo(id, title, !isChecked)
+                .then(() => getTodos())
+                .catch((error) => {
+                    alert("Произошла ошибка при обновлении статуса задачи: " + error.message);
+                    setIsChecked(checked => checked);
+                })
         }
     }
 
-    const onSave = () => {
-        value.trim().length > 0 ?
-            1 < value.length && value.length < 65 ?
-                successCreate() : errorCreate("Текст задачи должен быть от 2 до 64 символов") : errorCreate("Поле обязательно для заполнения (пробелы не учитываются)")
+    const onSaveTodoChanges = (e) => {
+        e.preventDefault();
+
+        if (title.trim().length === 0) {
+            setError("Поле обязательно для заполнения (пробелы не учитываются)")
+            setTitle(props.title);
+        } else if (2 > title.length || title.length > 65) {
+            setError("Текст задачи должен быть от 2 до 64 символов")
+            setTitle(props.title);
+        } else {
+            abilityToUpdateTodo()
+            setError("")
+        }
     }
 
-    const onDel = () => {
+    const onDeleteTodo = () => {
         const requestOptions = {
             method: 'DELETE'
         };
-
-        return (del(id, requestOptions))
-            .then(() => setItems(prev => prev.filter(item => item.id !== id)))
-            .then(() => render())
+        return (deleteTodo(id, requestOptions))
+            .then(() => getTodos())
     }
 
-    const edit = () => {
+    const onEditTodo = (e) => {
+        e.preventDefault();
         setIsEditing(true);
     }
 
-    const cancel = () => {
+    const onCancelTodoChanges = () => {
         setIsEditing(false);
-        setValue(title);
+        setTitle(props.title);
         setIsChecked(isDone);
+        setError("")
     }
 
-    const onChangeValue = (event) => {
-        setValue(event.target.value);
+    const onChangeTitle = (event) => {
+        setTitle(event.target.value);
+        setError("")
     }
 
     return (
-        <div className="card">
-            <input className={"card__checkbox"} onChange={onCheck} type={'checkbox'} checked={isChecked}/>
-            <input
-                className={`card__input ${isChecked ? "checked" : ""} ${!isEditing ? "pointer-none" : ""}`}
-                value={value}
-                onChange={onChangeValue}
-            />
-            <ButtonList
-                isEditing={isEditing}
-                onSave={onSave}
-                onDel={onDel}
-                edit={edit}
-                cancel={cancel}
-            />
-        </div>
+        <>
+            <form className={styles.card} onSubmit={onSaveTodoChanges}>
+                <CheckBox onChange={onCheckStatusTodo} isChecked={isChecked} />
+                <input
+                    className={`${styles.input} ${isChecked ? styles.checked : ""} ${!isEditing ? styles.pointerNone : ""}`}
+                    value={title}
+                    onChange={onChangeTitle}
+                />
+
+                <div className={styles.buttonList}>
+                    {!isEditing ? (
+                        <>
+                            <IconButton color="primary" type="button" action={onEditTodo} text={"🖊️"}/>
+                            <IconButton color="danger" type="button" action={onDeleteTodo} text={"🗑️"}/>
+                        </>
+                    ) : (
+                        <>
+                            <IconButton color="success" type="submit" text={"💾️"}/>
+                            <IconButton color="secondary" type="button" action={onCancelTodoChanges} text={"❌️"}/>
+                        </>
+                    )}
+                </div>
+            </form>
+            {error && <div className={styles.error}>{error}</div>}
+        </>
     )
 }
 
