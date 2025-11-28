@@ -1,6 +1,6 @@
 import AddTodo from '../components/AddTodo/AddTodo.jsx'
 import TodoTabs from '../components/TodoTabs/TodoTabs.jsx'
-import CardList from '../components/CardList/CardList.jsx'
+import TodoList from '../components/TodoList/TodoList.jsx'
 import './TodoListPage.module.scss'
 import {useEffect, useState} from "react";
 import { getTodosByFilter } from '../api/api.js'
@@ -31,7 +31,7 @@ function TodoListPage() {
             <h1> TODO List </h1>
             <AddTodo getTodos={getTodos} />
             <TodoTabs setTodoFilter={setTodoFilter} todoInfo={todoInfo} />
-            <CardList todos={todos} setTodos={setTodos} getTodos={getTodos}/>
+            <TodoList todos={todos} setTodos={setTodos} getTodos={getTodos}/>
         </>
     )
 }

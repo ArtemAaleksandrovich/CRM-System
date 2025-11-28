@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import styles from './Card.module.scss'
+import styles from './Todo.module.scss'
 import {updateTodo, deleteTodo} from "../../api/api.js";
 import IconButton from "../../ui/IconButton/IconButton.jsx";
 import CheckBox from "../../ui/CheckBox/CheckBox.jsx";
 
-function Card({id, isDone, setTodos, getTodos, ...props}) {
+function Todo({id, isDone, getTodos, ...props}) {
     const [isChecked, setIsChecked] = useState(isDone);
     const [title, setTitle] = useState(props.title);
     const [isEditing, setIsEditing] = useState(false);
@@ -38,7 +38,7 @@ function Card({id, isDone, setTodos, getTodos, ...props}) {
         if (title.trim().length === 0) {
             setError("Поле обязательно для заполнения (пробелы не учитываются)")
             setTitle(props.title);
-        } else if (2 > title.length || title.length > 65) {
+        } else if (title.length < 2 || title.length > 65) {
             setError("Текст задачи должен быть от 2 до 64 символов")
             setTitle(props.title);
         } else {
@@ -48,10 +48,7 @@ function Card({id, isDone, setTodos, getTodos, ...props}) {
     }
 
     const onDeleteTodo = () => {
-        const requestOptions = {
-            method: 'DELETE'
-        };
-        return (deleteTodo(id, requestOptions))
+        return (deleteTodo(id))
             .then(() => getTodos())
     }
 
@@ -101,4 +98,4 @@ function Card({id, isDone, setTodos, getTodos, ...props}) {
     )
 }
 
-export default Card;
+export default Todo;

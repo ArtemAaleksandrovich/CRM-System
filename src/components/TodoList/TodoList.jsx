@@ -1,18 +1,17 @@
-import Card from '../Card/Card.jsx'
+import Todo from '../Todo/Todo.jsx'
 
-function CardList({todos, setTodos, getTodos}) {
+function TodoList({todos, setTodos, getTodos}) {
     return (
         todos?.map((item) => (
-            <Card
+            <Todo
                 key={item.id}
                 id={item.id}
                 title={item.title}
                 isDone={item.isDone}
-                setTodos={setTodos}
                 getTodos={getTodos}
             />
         ))
     )
 }
 
-export default CardList;
+export default TodoList;

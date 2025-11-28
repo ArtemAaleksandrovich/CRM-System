@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import styles from './AddTodo.module.scss'
 import {createTodo} from "../../api/api.js";
-import IconButton from "../../ui/IconButton/IconButton.jsx";
 
 function AddTodo({ getTodos }) {
     const [title, setTitle] = useState('');
@@ -16,11 +15,12 @@ function AddTodo({ getTodos }) {
             })
     }
 
-    const onAddTodo = () => {
+    const onAddTodo = (e) => {
+        e.preventDefault();
         {
             if (title.trim().length === 0) {
                 setError("Поле обязательно для заполнения (пробелы не учитываются)")
-            } else if (2 > title.length || title.length > 65) {
+            } else if (title.length < 2 || title.length > 65) {
                 setError("Текст задачи должен быть от 2 до 64 символов")
             } else {
                 successCreateTodo()
@@ -35,7 +35,7 @@ function AddTodo({ getTodos }) {
     }
     return (
         <>
-            <form className={styles.addTask} action={onAddTodo}>
+            <form className={styles.addTask} onSubmit={onAddTodo}>
                 <input className={styles.input} onChange={onChangeTextTodo} value={title} placeholder="Задача для выполнения..." />
                 <button className={styles.button} type="submit">Добавить</button>
             </form>
