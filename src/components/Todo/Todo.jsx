@@ -50,6 +50,8 @@ function Todo({id, isDone, getTodos, ...props}) {
     const onDeleteTodo = () => {
         return (deleteTodo(id))
             .then(() => getTodos())
+            .catch((error) => {
+                alert("Произошла ошибка при удалении задачи: " + error.message)})
     }
 
     const onEditTodo = (e) => {

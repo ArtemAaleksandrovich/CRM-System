@@ -1,6 +1,6 @@
 import Todo from '../Todo/Todo.jsx'
 
-function TodoList({todos, setTodos, getTodos}) {
+function TodoList({todos, getTodos}) {
     return (
         todos?.map((item) => (
             <Todo
