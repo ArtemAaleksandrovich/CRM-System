@@ -21,11 +21,11 @@ export const createTodo = ({title, isDone}) => {
         })
 }
 
-export const updateTodo = (id, title, isChecked) => {
+export const updateTodo = (id, title, isDone) => {
     const requestOptions = {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, isDone: isChecked})
+        body: JSON.stringify({ title, isDone})
     }
     return (fetch(`${BASE_URL}/${id}`, requestOptions)
         .then(res => res.json()))

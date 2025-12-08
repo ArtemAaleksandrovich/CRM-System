@@ -3,31 +3,22 @@ import styles from './Todo.module.scss'
 import {updateTodo, deleteTodo} from "../../api/api.js";
 import IconButton from "../../ui/IconButton/IconButton.jsx";
 import CheckBox from "../../ui/CheckBox/CheckBox.jsx";
+import {validation} from '../../utils/validation.js'
 
-function Todo({id, isDone, getTodos, ...props}) {
-    const [isChecked, setIsChecked] = useState(isDone);
+function Todo({id, getTodos, ...props}) {
+    const [isDone, setIsDone] = useState(props.isDone);
     const [title, setTitle] = useState(props.title);
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState('');
 
-    const abilityToUpdateTodo = () => {
-        updateTodo(id, title, isChecked)
-            .then(() => getTodos())
-            .then(() => setIsEditing(false))
-            .catch((error) => {
-                alert("Произошла ошибка при обновлении всей задачи: " + error.message);
-                setTitle(props.title);
-            })
-    }
 
     const onCheckStatusTodo = () => {
-        setIsChecked(checked => !checked);
         if (!isEditing) {
-            updateTodo(id, title, !isChecked)
+            updateTodo(id, title, !isDone)
                 .then(() => getTodos())
+                .then(() => setIsDone(done => !done))
                 .catch((error) => {
                     alert("Произошла ошибка при обновлении статуса задачи: " + error.message);
-                    setIsChecked(checked => checked);
                 })
         }
     }
@@ -35,15 +26,17 @@ function Todo({id, isDone, getTodos, ...props}) {
     const onSaveTodoChanges = (e) => {
         e.preventDefault();
 
-        if (title.trim().length === 0) {
-            setError("Поле обязательно для заполнения (пробелы не учитываются)")
-            setTitle(props.title);
-        } else if (title.length < 2 || title.length > 65) {
-            setError("Текст задачи должен быть от 2 до 64 символов")
-            setTitle(props.title);
-        } else {
-            abilityToUpdateTodo()
+        if (validation(title, setError)) {
+            updateTodo(id, title, isDone)
+                .then(() => getTodos())
+                .then(() => setIsEditing(false))
+                .catch((error) => {
+                    alert("Произошла ошибка при обновлении всей задачи: " + error.message);
+                    setTitle(props.title);
+                })
             setError("")
+        } else {
+            setTitle(props.title);
         }
     }
 
@@ -62,7 +55,7 @@ function Todo({id, isDone, getTodos, ...props}) {
     const onCancelTodoChanges = () => {
         setIsEditing(false);
         setTitle(props.title);
-        setIsChecked(isDone);
+        setIsDone(props.isDone);
         setError("")
     }
 
@@ -74,9 +67,9 @@ function Todo({id, isDone, getTodos, ...props}) {
     return (
         <>
             <form className={styles.card} onSubmit={onSaveTodoChanges}>
-                <CheckBox onChange={onCheckStatusTodo} isChecked={isChecked} />
+                <CheckBox onChange={onCheckStatusTodo} isChecked={isDone} isHidden={isEditing}/>
                 <input
-                    className={`${styles.input} ${isChecked ? styles.checked : ""} ${!isEditing ? styles.pointerNone : ""}`}
+                    className={`${styles.input} ${isDone ? styles.checked : ""} ${!isEditing ? styles.pointerNone : ""}`}
                     value={title}
                     onChange={onChangeTitle}
                 />
@@ -84,13 +77,21 @@ function Todo({id, isDone, getTodos, ...props}) {
                 <div className={styles.buttonList}>
                     {!isEditing ? (
                         <>
-                            <IconButton color="primary" type="button" action={onEditTodo} text={"🖊️"}/>
-                            <IconButton color="danger" type="button" action={onDeleteTodo} text={"🗑️"}/>
+                            <IconButton color="primary" type="button" action={onEditTodo}>
+                                <img width={20} height={20} src="src/assets/edit_todo.svg" alt="Edit" />
+                            </IconButton>
+                            <IconButton color="danger" type="button" action={onDeleteTodo}>
+                                <img width={25} height={25} src="src/assets/delete_todo.svg" alt="Delete" />
+                            </IconButton>
                         </>
                     ) : (
                         <>
-                            <IconButton color="success" type="submit" text={"💾️"}/>
-                            <IconButton color="secondary" type="button" action={onCancelTodoChanges} text={"❌️"}/>
+                            <IconButton color="success" type="submit">
+                                <img width={17} height={17} src="src/assets/save.svg" alt="Save" />
+                            </IconButton>
+                            <IconButton color="secondary" type="button" action={onCancelTodoChanges}>
+                                <img width={25} height={25} src="src/assets/cancel.svg" alt="Cancel" />
+                            </IconButton>
                         </>
                     )}
                 </div>
