@@ -1,0 +1,25 @@
+.button {
+  border-radius: 8px;
+  width: 45px;
+  height: 45px;
+  margin-right: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.primary {
+  background-color: #4ca3ec;
+}
+
+.success {
+  background-color: #64C150C6;
+}
+
+.secondary {
+  background-color: #9A9A9AAD;
+}
+
+.danger {
+  background-color: #ef4242;
+}

@@ -1,0 +1,36 @@
+.card {
+  border: 1px solid #292828;
+  background-color: #ffffff;
+  width: 400px;
+  height: 55px;
+  border-radius: 7px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+
+  .input {
+    border: none;
+    width: 250px;
+    height: 45px;
+  }
+
+  .buttonList {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.checked {
+  text-decoration: line-through;
+}
+
+.pointerNone {
+  pointer-events: none;
+}
+
+.error {
+  width: 300px;
+  color: red;
+  text-align: center;
+}

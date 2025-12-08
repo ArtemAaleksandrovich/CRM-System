@@ -1,0 +1,19 @@
+import {useState} from 'react';
+import styles from './TodoTabs.module.scss'
+
+function TodoTabs({setTodoFilter, todoInfo}) {
+    const [activeFilter, setActiveFilter] = useState('all');
+
+    const onChangeFilter = (filter) => {
+        setTodoFilter(filter)
+        setActiveFilter(filter);
+    }
+    return (
+        <nav>
+            <button className={`${styles.button} ${activeFilter === 'all' ? styles.active : ''}`} onClick={() => onChangeFilter('all')}>Все({todoInfo.all})</button>
+            <button className={`${styles.button} ${activeFilter === 'inWork' ? styles.active : ''}`} onClick={() => onChangeFilter('inWork')}>В работе({todoInfo.inWork})</button>
+            <button className={`${styles.button} ${activeFilter === 'completed' ? styles.active : ''}`} onClick={() => onChangeFilter('completed')}>Сделано({todoInfo.completed})</button>
+        </nav>
+    )
+}
+export default TodoTabs;
