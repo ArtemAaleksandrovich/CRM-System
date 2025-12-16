@@ -1,11 +1,18 @@
-import React, {useState} from 'react';
+import {type ChangeEvent, type FormEvent, useState} from 'react';
 import styles from './Todo.module.scss'
-import {updateTodo, deleteTodo} from "../../api/api.js";
-import IconButton from "../../ui/IconButton/IconButton.jsx";
-import CheckBox from "../../ui/CheckBox/CheckBox.jsx";
-import {validation} from '../../utils/validation.js'
+import {updateTodo, deleteTodo} from "../../api/api.ts";
+import IconButton from "../../ui/IconButton/IconButton.tsx";
+import CheckBox from "../../ui/CheckBox/CheckBox.tsx";
+import {validation} from '../../utils/validation.ts'
 
-function Todo({id, getTodos, ...props}) {
+interface TodoProps {
+    getTodos(): void,
+    id: number,
+    isDone: boolean,
+    title: string,
+}
+
+function Todo(props: TodoProps) {
     const [isDone, setIsDone] = useState(props.isDone);
     const [title, setTitle] = useState(props.title);
     const [isEditing, setIsEditing] = useState(false);
@@ -14,21 +21,21 @@ function Todo({id, getTodos, ...props}) {
 
     const onCheckStatusTodo = () => {
         if (!isEditing) {
-            updateTodo(id, title, !isDone)
-                .then(() => getTodos())
-                .then(() => setIsDone(done => !done))
+            updateTodo(props.id, title, !isDone)
+                .then(() => props.getTodos())
+                .then(() => setIsDone((done: boolean)  => !done))
                 .catch((error) => {
                     alert("Произошла ошибка при обновлении статуса задачи: " + error.message);
                 })
         }
     }
 
-    const onSaveTodoChanges = (e) => {
+    const onSaveTodoChanges = (e: FormEvent) => {
         e.preventDefault();
 
         if (validation(title, setError)) {
-            updateTodo(id, title, isDone)
-                .then(() => getTodos())
+            updateTodo(props.id, title, isDone)
+                .then(() => props.getTodos())
                 .then(() => setIsEditing(false))
                 .catch((error) => {
                     alert("Произошла ошибка при обновлении всей задачи: " + error.message);
@@ -40,14 +47,20 @@ function Todo({id, getTodos, ...props}) {
         }
     }
 
-    const onDeleteTodo = () => {
-        return (deleteTodo(id))
-            .then(() => getTodos())
-            .catch((error) => {
-                alert("Произошла ошибка при удалении задачи: " + error.message)})
+    const onDeleteTodo = async () => {
+        try {
+            await (deleteTodo(props.id));
+            return props.getTodos();
+        } catch (error) {
+            if (error instanceof Error) {
+                alert("Произошла ошибка при удалении задачи: " + error.message);
+            } else {
+                alert("Произошла неизвестная ошибка при удалении задачи: " + error);
+            }
+        }
     }
 
-    const onEditTodo = (e) => {
+    const onEditTodo = (e: FormEvent) => {
         e.preventDefault();
         setIsEditing(true);
     }
@@ -59,7 +72,7 @@ function Todo({id, getTodos, ...props}) {
         setError("")
     }
 
-    const onChangeTitle = (event) => {
+    const onChangeTitle = (event: ChangeEvent<HTMLInputElement>) => {
         setTitle(event.target.value);
         setError("")
     }

@@ -1,4 +1,4 @@
-export const validation = (title, setError) => {
+export const validation = (title: string, setError) => {
     if (title.trim().length === 0) {
         setError("Поле обязательно для заполнения (пробелы не учитываются)")
         return false;
