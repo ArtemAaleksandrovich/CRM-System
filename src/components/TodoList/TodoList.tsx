@@ -1,16 +1,18 @@
 import Todo from '../Todo/Todo.tsx'
-import { type TodoType } from '../../pages/TodoListPage.tsx'
+import styles from './TodoList.module.scss'
+import type {TodoInterface} from "../../pages/TodoListPage.tsx";
+
 
 interface TodoListProps {
     getTodos(): void;
-    todos: TodoType[];
+    todos: TodoInterface[];
 }
 
 function TodoList({todos, getTodos}: TodoListProps) {
     return (
-        <ul style={{marginTop: 0, paddingLeft: 0}}>
-            {todos?.map((item: TodoType) => (
-                <li style={{listStyleType: "none"}} key={item.id}>
+        <ul className={styles.ul}>
+            {todos?.map((item: TodoInterface) => (
+                <li className={styles.li} key={item.id}>
                     <Todo
                         id={item.id}
                         title={item.title}

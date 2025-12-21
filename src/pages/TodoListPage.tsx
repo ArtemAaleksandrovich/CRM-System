@@ -5,14 +5,14 @@ import styles from './TodoListPage.module.scss'
 import {useEffect, useState} from "react";
 import { getTodosByFilter } from '../api/api.ts'
 
-export interface TodoType {
+export interface TodoInterface {
     id: number;
     title: string;
     isDone: boolean;
 }
 
 function TodoListPage() {
-    const [todos, setTodos] = useState<TodoType[]>([])
+    const [todos, setTodos] = useState<TodoInterface[]>([])
     const [todoFilter, setTodoFilter] = useState('all')
     const [todoInfo, setTodoInfo] = useState({all: 0, inWork: 0, completed: 0})
 
