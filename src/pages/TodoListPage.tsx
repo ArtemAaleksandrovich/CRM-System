@@ -4,17 +4,13 @@ import TodoList from '../components/TodoList/TodoList.tsx'
 import styles from './TodoListPage.module.scss'
 import {useEffect, useState} from "react";
 import { getTodosByFilter } from '../api/api.ts'
+import type { TodoInterface, TodoInfo } from '../api/types.ts'
 
-export interface TodoInterface {
-    id: number;
-    title: string;
-    isDone: boolean;
-}
 
 function TodoListPage() {
     const [todos, setTodos] = useState<TodoInterface[]>([])
-    const [todoFilter, setTodoFilter] = useState('all')
-    const [todoInfo, setTodoInfo] = useState({all: 0, inWork: 0, completed: 0})
+    const [todoFilter, setTodoFilter] = useState<string>('all')
+    const [todoInfo, setTodoInfo] = useState<TodoInfo>({all: 0, inWork: 0, completed: 0})
 
     useEffect(() => {
         getTodos()

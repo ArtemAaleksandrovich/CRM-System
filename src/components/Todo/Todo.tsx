@@ -4,31 +4,30 @@ import {updateTodo, deleteTodo} from "../../api/api.ts";
 import IconButton from "../../ui/IconButton/IconButton.tsx";
 import CheckBox from "../../ui/CheckBox/CheckBox.tsx";
 import {validation} from '../../utils/validation.ts'
+import type {TodoInterface} from "../../api/types.ts";
 
 import edit_svg from "../../assets/edit_todo.svg"
 import delete_svg from "../../assets/delete_todo.svg"
 import save_svg from "../../assets/save.svg"
 import cancel_svg from "../../assets/cancel.svg"
 
-interface TodoProps {
+interface TodoProps extends TodoInterface {
     getTodos(): void,
-    id: number,
-    isDone: boolean,
-    title: string,
 }
 
+
 function Todo(props: TodoProps) {
-    const [isDone, setIsDone] = useState(props.isDone);
-    const [title, setTitle] = useState(props.title);
-    const [isEditing, setIsEditing] = useState(false);
-    const [error, setError] = useState('');
+    const [isDone, setIsDone] = useState<boolean>(props.isDone);
+    const [title, setTitle] = useState<string>(props.title);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
 
 
     const onCheckStatusTodo = () => {
         if (!isEditing) {
             updateTodo(props.id, title, !isDone)
                 .then(() => props.getTodos())
-                .then(() => setIsDone((done: boolean)  => !done))
+                .then(() => setIsDone((done) => !done))
                 .catch((error) => {
                     alert("Произошла ошибка при обновлении статуса задачи: " + error.message);
                 })
@@ -54,7 +53,7 @@ function Todo(props: TodoProps) {
 
     const onDeleteTodo = async () => {
         try {
-            await (deleteTodo(props.id));
+            await deleteTodo(props.id);
             return props.getTodos();
         } catch (error) {
             if (error instanceof Error) {
@@ -96,19 +95,19 @@ function Todo(props: TodoProps) {
                     {!isEditing ? (
                         <>
                             <IconButton color="primary" type="button" action={onEditTodo}>
-                                <img width={20} height={20} src={edit_svg} alt="Edit" />
+                                <img width={20} height={20} src={edit_svg} alt="Edit"/>
                             </IconButton>
                             <IconButton color="danger" type="button" action={onDeleteTodo}>
-                                <img width={25} height={25} src={delete_svg} alt="Delete" />
+                                <img width={25} height={25} src={delete_svg} alt="Delete"/>
                             </IconButton>
                         </>
                     ) : (
                         <>
                             <IconButton color="success" type="submit">
-                                <img width={17} height={17} src={save_svg} alt="Save" />
+                                <img width={17} height={17} src={save_svg} alt="Save"/>
                             </IconButton>
                             <IconButton color="secondary" type="button" action={onCancelTodoChanges}>
-                                <img width={25} height={25} src={cancel_svg} alt="Cancel" />
+                                <img width={25} height={25} src={cancel_svg} alt="Cancel"/>
                             </IconButton>
                         </>
                     )}

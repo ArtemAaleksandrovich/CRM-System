@@ -1,7 +1,7 @@
 import styles from './CheckBox.module.scss'
 
 interface CheckBoxProps {
-    onChange: () => void;
+    onChange(): void;
     isChecked: boolean;
     isHidden: boolean;
 }

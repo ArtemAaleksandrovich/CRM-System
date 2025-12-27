@@ -1,6 +1,6 @@
 import Todo from '../Todo/Todo.tsx'
 import styles from './TodoList.module.scss'
-import type {TodoInterface} from "../../pages/TodoListPage.tsx";
+import type { TodoInterface } from "../../api/types.ts";
 
 interface TodoListProps {
     getTodos(): void;

@@ -8,14 +8,14 @@ interface AddTodoProps {
 }
 
 function AddTodo({getTodos}: AddTodoProps ) {
-    const [title, setTitle] = useState('');
-    const [error, setError] = useState('');
+    const [title, setTitle] = useState<string>('');
+    const [error, setError] = useState<string>('');
 
     const onAddTodo = (e: FormEvent) => {
         e.preventDefault();
         {
             if (validation(title, setError)) {
-                createTodo(title, false)
+                createTodo({title, isDone: false})
                     .then(() => getTodos())
                     .then(() => setTitle(''))
                     .catch((error) => {

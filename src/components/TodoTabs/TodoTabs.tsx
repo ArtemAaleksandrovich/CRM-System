@@ -1,17 +1,14 @@
 import {useState, type Dispatch, type SetStateAction} from 'react';
 import styles from './TodoTabs.module.scss'
+import type {TodoInfo} from "../../api/types.ts";
 
 interface TodoTabsProps {
     setTodoFilter: Dispatch<SetStateAction<string>>
-    todoInfo: {
-        all: number;
-        inWork: number;
-        completed: number;
-    }
+    todoInfo: TodoInfo;
 }
 
 function TodoTabs({setTodoFilter, todoInfo}: TodoTabsProps) {
-    const [activeFilter, setActiveFilter] = useState('all');
+    const [activeFilter, setActiveFilter] = useState<string>('all');
 
     const onChangeFilter = (filter: string) => {
         setTodoFilter(filter);
