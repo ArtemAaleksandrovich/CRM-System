@@ -25,7 +25,7 @@ function Todo(props: TodoProps) {
 
     const onCheckStatusTodo = () => {
         if (!isEditing) {
-            updateTodo(props.id, title, !isDone)
+            updateTodo({id: props.id, title: title, isDone: !isDone})
                 .then(() => props.getTodos())
                 .then(() => setIsDone((done) => !done))
                 .catch((error) => {
@@ -38,7 +38,7 @@ function Todo(props: TodoProps) {
         e.preventDefault();
 
         if (validation(title, setError)) {
-            updateTodo(props.id, title, isDone)
+            updateTodo({id: props.id, title: title, isDone: isDone})
                 .then(() => props.getTodos())
                 .then(() => setIsEditing(false))
                 .catch((error) => {
