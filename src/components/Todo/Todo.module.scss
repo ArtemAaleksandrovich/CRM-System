@@ -1,24 +1,7 @@
-.card {
-  border: 1px solid #292828;
-  background-color: #ffffff;
-  width: 400px;
-  height: 55px;
-  border-radius: 7px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
-
-  .input {
-    border: none;
-    width: 250px;
-    height: 45px;
-  }
-
-  .buttonList {
-    display: flex;
-    align-items: center;
-  }
+.input {
+  border: none;
+  width: 250px;
+  height: 45px;
 }
 
 .checked {
@@ -29,8 +12,11 @@
   pointer-events: none;
 }
 
-.error {
-  width: 300px;
-  color: red;
-  text-align: center;
+.inputEditing {
+  width: 270px;
+}
+
+.buttonList {
+  display: flex;
+  gap: 0.5rem;
 }
