@@ -1,7 +1,7 @@
 import AddTodo from '../../components/AddTodo/AddTodo.tsx'
 import TodoTabs from '../../components/TodoTabs/TodoTabs.tsx'
 import TodoList from '../../components/TodoList/TodoList.tsx'
-import { useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 import { getTodosByFilter } from '../../api/api.ts'
 import type { TodoInterface, TodoInfo } from '../../api/types.ts'
 import {Alert, ConfigProvider, Layout, Typography} from "antd";
@@ -22,7 +22,7 @@ function TodoListPage() {
         return () => {clearInterval(interval)}
     }, [todoFilter]);
 
-    const getTodos = () => {
+    const getTodos = useCallback(() => {
         try {
             getTodosByFilter(todoFilter)
                 .then((response) => {
@@ -36,7 +36,7 @@ function TodoListPage() {
                 setError("Неизвестная ошибка в рендере страницы! " + error);
             }
         }
-    }
+    }, [todoFilter])
 
     const theme = {
         token: {

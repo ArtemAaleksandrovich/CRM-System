@@ -1,13 +1,14 @@
 import Todo from '../Todo/Todo.tsx'
 import type { TodoInterface } from "../../api/types.ts";
 import { Card, Space } from "antd";
+import {memo} from "react";
 
 interface TodoListProps {
     getTodos(): void;
     todos: TodoInterface[];
 }
 
-function TodoList({todos, getTodos}: TodoListProps) {
+const TodoList = memo(function TodoList({todos, getTodos}: TodoListProps) {
     return (
         <Space
             orientation="vertical"
@@ -25,6 +26,6 @@ function TodoList({todos, getTodos}: TodoListProps) {
             ))}
         </Space>
     )
-}
+})
 
 export default TodoList;

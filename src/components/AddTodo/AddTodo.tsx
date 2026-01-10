@@ -1,6 +1,6 @@
 import {Alert, type FormProps} from 'antd';
 import { Button, Form, Input } from 'antd';
-import {type ChangeEvent, useState} from 'react';
+import {type ChangeEvent, useCallback, useState} from 'react';
 import {createTodo} from "../../api/api.ts";
 
 interface AddTodoProps {
@@ -16,7 +16,7 @@ const AddTodo = ({getTodos}: AddTodoProps) => {
     const [title, setTitle] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
 
-    const onFinish: FormProps<FieldType>['onFinish'] = () => {
+    const onFinish: FormProps<FieldType>['onFinish'] = useCallback(() => {
         createTodo({title, isDone: false})
             .then(() => getTodos())
             .then(() => setTitle(''))
@@ -24,11 +24,11 @@ const AddTodo = ({getTodos}: AddTodoProps) => {
             .catch((error) => {
                 setError("Произошла ошибка при создании задачи: " + error.message);
             })
-    };
+    }, [getTodos(), form]);
 
-    const onChangeTextTodo = (event: ChangeEvent<HTMLInputElement>) => {
+    const onChangeTextTodo = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         setTitle(event.target.value);
-    }
+    }, [])
 
     return (
         <>

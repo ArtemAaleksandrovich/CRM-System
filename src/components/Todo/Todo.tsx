@@ -1,5 +1,5 @@
 import {Flex, type FormProps, Alert, Form, Input, Image} from 'antd';
-import {type FormEvent, useState} from 'react';
+import {type FormEvent, memo, useCallback, useState} from 'react';
 import styles from './Todo.module.scss'
 import {deleteTodo, updateTodo} from "../../api/api.ts";
 import CheckBox from "../../ui/CheckBox/CheckBox.tsx";
@@ -19,13 +19,13 @@ interface FieldType {
     todoTitle: string;
 }
 
-const Todo = (props: TodoProps) => {
+const Todo = memo (function Todo(props: TodoProps) {
     const [form] = Form.useForm();
     const [isDone, setIsDone] = useState<boolean>(props.isDone);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
+    const onFinish: FormProps<FieldType>['onFinish'] = useCallback((values: FieldType) => {
         const newTitle = values.todoTitle;
 
         updateTodo({id: props.id, title: newTitle, isDone: isDone})
@@ -35,9 +35,9 @@ const Todo = (props: TodoProps) => {
                 setError("Произошла ошибка при обновлении всей задачи: " + error.message);
                 form.setFieldsValue({ todoTitle: props.title });
             })
-    };
+    }, [props.id, isDone, props.getTodos(), form, props.title]);
 
-    const onCheckStatusTodo = () => {
+    const onCheckStatusTodo = useCallback(() => {
         if (!isEditing) {
             const currentTitle = form.getFieldValue('todoTitle');
 
@@ -48,9 +48,9 @@ const Todo = (props: TodoProps) => {
                     setError("Произошла ошибка при обновлении статуса задачи: " + error.message);
                 })
         }
-    }
+    }, [isEditing, form, props.id, isDone, props.getTodos()])
 
-    const onDeleteTodo = async () => {
+    const onDeleteTodo = useCallback(async () => {
         try {
             await deleteTodo(props.id);
             return props.getTodos();
@@ -61,18 +61,18 @@ const Todo = (props: TodoProps) => {
                 setError("Произошла неизвестная ошибка при удалении задачи: " + error);
             }
         }
-    }
+    }, [props.id, props.getTodos()])
 
-    const onEditTodo = (e: FormEvent) => {
+    const onEditTodo = useCallback((e: FormEvent) => {
         e.preventDefault();
         setIsEditing(true);
-    }
+    }, [])
 
-    const onCancelTodoChanges = () => {
+    const onCancelTodoChanges = useCallback(() => {
         setIsEditing(false);
         form.setFieldsValue({ todoTitle: props.title });
         setIsDone(props.isDone);
-    }
+    }, [form, props.title, props.isDone])
 
     return (
         <>
@@ -127,6 +127,6 @@ const Todo = (props: TodoProps) => {
             {error && <Alert title={error} type='error' closable={{ closeIcon: true, 'aria-label': 'close' }} style={{width: '400px'}} onClick={() => setError(null)}/>}
         </>
     );
-};
+});
 
 export default Todo;

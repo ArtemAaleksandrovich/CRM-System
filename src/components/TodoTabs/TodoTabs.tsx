@@ -1,6 +1,6 @@
 import { Tabs } from 'antd';
 import type { TabsProps } from 'antd';
-import {type Dispatch, type SetStateAction} from 'react';
+import {type Dispatch, type SetStateAction, useCallback} from 'react';
 import type {TodoInfo} from "../../api/types.ts";
 interface TodoTabsProps {
     setTodoFilter: Dispatch<SetStateAction<string>>
@@ -24,9 +24,9 @@ const TodoTabs = ({setTodoFilter, todoInfo}: TodoTabsProps) => {
         },
     ];
 
-    const onChange = (key: string) => {
+    const onChange = useCallback((key: string) => {
         setTodoFilter(key);
-    };
+    },[])
 
     return <Tabs style={{marginTop: '0.5rem'}} defaultActiveKey="all" items={items} onChange={onChange}/>
 };

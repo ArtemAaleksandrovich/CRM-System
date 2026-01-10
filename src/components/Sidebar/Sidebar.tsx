@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import {Link, useLocation} from 'react-router-dom'
 import {type Key, type ReactNode, useState} from 'react';
 import {
     AppstoreAddOutlined,
@@ -25,19 +25,24 @@ function getItem(
     } as MenuItem;
 }
 
-const items: MenuItem[] = [
-    getItem(<Link to="/">TODO List</Link>, '1', <AppstoreAddOutlined />),
-    getItem(<Link to="/profile">Profile</Link>, 'sub1', <UserOutlined />),
-];
+
 
 
 const Sidebar = () => {
     const [collapsed, setCollapsed] = useState(false);
+    const location = useLocation();
+    const currentPath = location.pathname;
+
+
+    const items: MenuItem[] = [
+        getItem(<Link to="/">TODO List</Link>, '/', <AppstoreAddOutlined />),
+        getItem(<Link to="/profile">Profile</Link>, '/profile', <UserOutlined />),
+    ];
 
     return (
         <Layout>
             <Sider style={{backgroundColor: '#f1f7f9', borderRight: '1px solid grey'}} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                <Menu style={{backgroundColor: '#f1f7f9'}} defaultSelectedKeys={['1']} mode="inline" items={items} />
+                <Menu style={{backgroundColor: '#f1f7f9'}} defaultSelectedKeys={[currentPath]} mode="inline" items={items} />
             </Sider>
         </Layout>
     );
