@@ -1,34 +1,45 @@
-import React, {useState} from 'react';
+import {type ChangeEvent, type FormEvent, useState} from 'react';
 import styles from './Todo.module.scss'
-import {updateTodo, deleteTodo} from "../../api/api.js";
-import IconButton from "../../ui/IconButton/IconButton.jsx";
-import CheckBox from "../../ui/CheckBox/CheckBox.jsx";
-import {validation} from '../../utils/validation.js'
+import {updateTodo, deleteTodo} from "../../api/api.ts";
+import IconButton from "../../ui/IconButton/IconButton.tsx";
+import CheckBox from "../../ui/CheckBox/CheckBox.tsx";
+import {validation} from '../../utils/validation.ts'
+import type {TodoInterface} from "../../api/types.ts";
 
-function Todo({id, getTodos, ...props}) {
-    const [isDone, setIsDone] = useState(props.isDone);
-    const [title, setTitle] = useState(props.title);
-    const [isEditing, setIsEditing] = useState(false);
-    const [error, setError] = useState('');
+import edit_svg from "../../assets/edit_todo.svg"
+import delete_svg from "../../assets/delete_todo.svg"
+import save_svg from "../../assets/save.svg"
+import cancel_svg from "../../assets/cancel.svg"
+
+interface TodoProps extends TodoInterface {
+    getTodos(): void,
+}
+
+
+function Todo(props: TodoProps) {
+    const [isDone, setIsDone] = useState<boolean>(props.isDone);
+    const [title, setTitle] = useState<string>(props.title);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
 
 
     const onCheckStatusTodo = () => {
         if (!isEditing) {
-            updateTodo(id, title, !isDone)
-                .then(() => getTodos())
-                .then(() => setIsDone(done => !done))
+            updateTodo({id: props.id, title: title, isDone: !isDone})
+                .then(() => props.getTodos())
+                .then(() => setIsDone((done) => !done))
                 .catch((error) => {
                     alert("Произошла ошибка при обновлении статуса задачи: " + error.message);
                 })
         }
     }
 
-    const onSaveTodoChanges = (e) => {
+    const onSaveTodoChanges = (e: FormEvent) => {
         e.preventDefault();
 
         if (validation(title, setError)) {
-            updateTodo(id, title, isDone)
-                .then(() => getTodos())
+            updateTodo({id: props.id, title: title, isDone: isDone})
+                .then(() => props.getTodos())
                 .then(() => setIsEditing(false))
                 .catch((error) => {
                     alert("Произошла ошибка при обновлении всей задачи: " + error.message);
@@ -40,14 +51,20 @@ function Todo({id, getTodos, ...props}) {
         }
     }
 
-    const onDeleteTodo = () => {
-        return (deleteTodo(id))
-            .then(() => getTodos())
-            .catch((error) => {
-                alert("Произошла ошибка при удалении задачи: " + error.message)})
+    const onDeleteTodo = async () => {
+        try {
+            await deleteTodo(props.id);
+            return props.getTodos();
+        } catch (error) {
+            if (error instanceof Error) {
+                alert("Произошла ошибка при удалении задачи: " + error.message);
+            } else {
+                alert("Произошла неизвестная ошибка при удалении задачи: " + error);
+            }
+        }
     }
 
-    const onEditTodo = (e) => {
+    const onEditTodo = (e: FormEvent) => {
         e.preventDefault();
         setIsEditing(true);
     }
@@ -59,7 +76,7 @@ function Todo({id, getTodos, ...props}) {
         setError("")
     }
 
-    const onChangeTitle = (event) => {
+    const onChangeTitle = (event: ChangeEvent<HTMLInputElement>) => {
         setTitle(event.target.value);
         setError("")
     }
@@ -78,19 +95,19 @@ function Todo({id, getTodos, ...props}) {
                     {!isEditing ? (
                         <>
                             <IconButton color="primary" type="button" action={onEditTodo}>
-                                <img width={20} height={20} src="src/assets/edit_todo.svg" alt="Edit" />
+                                <img width={20} height={20} src={edit_svg} alt="Edit"/>
                             </IconButton>
                             <IconButton color="danger" type="button" action={onDeleteTodo}>
-                                <img width={25} height={25} src="src/assets/delete_todo.svg" alt="Delete" />
+                                <img width={25} height={25} src={delete_svg} alt="Delete"/>
                             </IconButton>
                         </>
                     ) : (
                         <>
                             <IconButton color="success" type="submit">
-                                <img width={17} height={17} src="src/assets/save.svg" alt="Save" />
+                                <img width={17} height={17} src={save_svg} alt="Save"/>
                             </IconButton>
                             <IconButton color="secondary" type="button" action={onCancelTodoChanges}>
-                                <img width={25} height={25} src="src/assets/cancel.svg" alt="Cancel" />
+                                <img width={25} height={25} src={cancel_svg} alt="Cancel"/>
                             </IconButton>
                         </>
                     )}

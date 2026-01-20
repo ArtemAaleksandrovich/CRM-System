@@ -1,13 +1,17 @@
-import React, {useState} from 'react';
+import {type FormEvent, type ChangeEvent, useState} from 'react';
 import styles from './AddTodo.module.scss'
-import {createTodo} from "../../api/api.js";
-import {validation} from '../../utils/validation.js'
+import {createTodo} from "../../api/api.ts";
+import {validation} from '../../utils/validation.ts'
 
-function AddTodo({ getTodos }) {
-    const [title, setTitle] = useState('');
-    const [error, setError] = useState('');
+interface AddTodoProps {
+    getTodos(): void;
+}
 
-    const onAddTodo = (e) => {
+function AddTodo({getTodos}: AddTodoProps ) {
+    const [title, setTitle] = useState<string>('');
+    const [error, setError] = useState<string>('');
+
+    const onAddTodo = (e: FormEvent) => {
         e.preventDefault();
         {
             if (validation(title, setError)) {
@@ -22,7 +26,7 @@ function AddTodo({ getTodos }) {
         }
     }
 
-    const onChangeTextTodo = (event) => {
+    const onChangeTextTodo = (event: ChangeEvent<HTMLInputElement>) => {
         setTitle(event.target.value);
         setError("")
     }

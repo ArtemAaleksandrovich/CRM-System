@@ -1,6 +1,5 @@
-import React  from 'react'
 import './App.scss'
-import TodoListPage from './pages/TodoListPage.jsx'
+import TodoListPage from './pages/TodoListPage.tsx'
 
 function App() {
   return (

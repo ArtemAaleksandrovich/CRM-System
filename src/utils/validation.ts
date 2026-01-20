@@ -1,4 +1,6 @@
-export const validation = (title, setError) => {
+import type {Dispatch, SetStateAction} from "react";
+
+export const validation = (title: string, setError: Dispatch<SetStateAction<string>>) => {
     if (title.trim().length === 0) {
         setError("Поле обязательно для заполнения (пробелы не учитываются)")
         return false;
