@@ -17,7 +17,7 @@ export interface TodoInfo {
 
 export interface MetaResponse<T, N> {
     data: T[]
-    info?: N
+    info: N // изменил с info? на info (он по идее всегда должен быть)
     meta: {
         totalAmount: number
     }

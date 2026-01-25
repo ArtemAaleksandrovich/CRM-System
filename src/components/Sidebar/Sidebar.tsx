@@ -1,5 +1,5 @@
 import {Link, useLocation} from 'react-router-dom'
-import {type Key, type ReactNode, useState} from 'react';
+import { useState } from 'react';
 import {
     AppstoreAddOutlined,
     UserOutlined,
@@ -11,32 +11,15 @@ const { Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-function getItem(
-    label: ReactNode,
-    key: Key,
-    icon?: ReactNode,
-    children?: MenuItem[],
-): MenuItem {
-    return {
-        key,
-        icon,
-        children,
-        label,
-    } as MenuItem;
-}
-
-
-
-
 const Sidebar = () => {
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState<boolean>(false);
     const location = useLocation();
     const currentPath = location.pathname;
 
 
     const items: MenuItem[] = [
-        getItem(<Link to="/">TODO List</Link>, '/', <AppstoreAddOutlined />),
-        getItem(<Link to="/profile">Profile</Link>, '/profile', <UserOutlined />),
+        { label: <Link to="/">TODO List</Link>, key: '/', icon: <AppstoreAddOutlined /> },
+        { label: <Link to="/profile">Profile</Link>, key: '/profile', icon: <UserOutlined /> },
     ];
 
     return (

@@ -1,7 +1,7 @@
 import AddTodo from '../../components/AddTodo/AddTodo.tsx'
 import TodoTabs from '../../components/TodoTabs/TodoTabs.tsx'
 import TodoList from '../../components/TodoList/TodoList.tsx'
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import { getTodosByFilter } from '../../api/api.ts'
 import type { TodoInterface, TodoInfo } from '../../api/types.ts'
 import {Alert, ConfigProvider, Layout, Typography} from "antd";
@@ -22,13 +22,11 @@ function TodoListPage() {
         return () => {clearInterval(interval)}
     }, [todoFilter]);
 
-    const getTodos = useCallback(() => {
+    const getTodos: () => Promise<void> = useCallback(async () => {
         try {
-            getTodosByFilter(todoFilter)
-                .then((response) => {
-                    setTodos(response.data);
-                    setTodoInfo(response.info);
-                })
+            const response = await getTodosByFilter(todoFilter)
+            setTodos(response.data);
+            setTodoInfo(response.info);
         } catch(error) {
             if (error instanceof Error) {
                 setError("Ошибка в рендере страницы! " + error.message);
@@ -54,6 +52,9 @@ function TodoListPage() {
         alignItems: 'center',
     };
 
+    const memoizedTodoInfo = useMemo(() => todoInfo, [todoInfo]);
+    const memoizedTodos = useMemo(() => todos, [todos]);
+
     return (
         <Layout style={layoutStyle}>
             {error && <Alert title={error} type='error' closable={{ closeIcon: true, 'aria-label': 'close' }} onClick={() => setError(null)}/>}
@@ -61,9 +62,10 @@ function TodoListPage() {
                 <Title> TODO List </Title>
             </ConfigProvider>
             <AddTodo getTodos={getTodos} />
-            <TodoTabs setTodoFilter={setTodoFilter} todoInfo={todoInfo} />
-            <TodoList todos={todos} getTodos={getTodos}/>
+            <TodoTabs setTodoFilter={setTodoFilter} todoInfo={memoizedTodoInfo} />
+            <TodoList todos={memoizedTodos} getTodos={getTodos}/>
         </Layout>
     )
 }
+
 export default TodoListPage;

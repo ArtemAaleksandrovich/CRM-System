@@ -1,5 +1,5 @@
 import {Flex, type FormProps, Alert, Form, Input, Image} from 'antd';
-import {type FormEvent, memo, useCallback, useState} from 'react';
+import {type FormEvent, memo, useState} from 'react';
 import styles from './Todo.module.scss'
 import {deleteTodo, updateTodo} from "../../api/api.ts";
 import CheckBox from "../../ui/CheckBox/CheckBox.tsx";
@@ -19,41 +19,49 @@ interface FieldType {
     todoTitle: string;
 }
 
-const Todo = memo (function Todo(props: TodoProps) {
+
+const Todo = memo ((props: TodoProps) => {
     const [form] = Form.useForm();
     const [isDone, setIsDone] = useState<boolean>(props.isDone);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    const onFinish: FormProps<FieldType>['onFinish'] = useCallback((values: FieldType) => {
-        const newTitle = values.todoTitle;
-
-        updateTodo({id: props.id, title: newTitle, isDone: isDone})
-            .then(() => props.getTodos())
-            .then(() => setIsEditing(false))
-            .catch((error) => {
+    const onFinish: FormProps<FieldType>['onFinish'] = async (values: FieldType) => {
+        try {
+            await updateTodo({id: props.id, title: values.todoTitle, isDone: isDone})
+            props.getTodos()
+            setIsEditing(false)
+        } catch(error) {
+            if (error instanceof Error) {
                 setError("Произошла ошибка при обновлении всей задачи: " + error.message);
-                form.setFieldsValue({ todoTitle: props.title });
-            })
-    }, [props.id, isDone, props.getTodos(), form, props.title]);
+            } else {
+                setError("Неизвестная ошибка при обновлении всей задачи! " + error);
+            }
+            form.setFieldsValue({ todoTitle: props.title });
+        }
+    };
 
-    const onCheckStatusTodo = useCallback(() => {
+    const onCheckStatusTodo = async () => {
         if (!isEditing) {
             const currentTitle = form.getFieldValue('todoTitle');
-
-            updateTodo({id: props.id, title: currentTitle, isDone: !isDone})
-                .then(() => props.getTodos())
-                .then(() => setIsDone((done) => !done))
-                .catch((error) => {
+            try {
+                await updateTodo({id: props.id, title: currentTitle, isDone: !isDone})
+                props.getTodos()
+                setIsDone((done) => !done)
+            } catch(error) {
+                if (error instanceof Error) {
                     setError("Произошла ошибка при обновлении статуса задачи: " + error.message);
-                })
+                } else {
+                    setError("Неизвестная ошибка при обновлении статуса задачи! " + error);
+                }
+            }
         }
-    }, [isEditing, form, props.id, isDone, props.getTodos()])
+    }
 
-    const onDeleteTodo = useCallback(async () => {
+    const onDeleteTodo = async () => {
         try {
             await deleteTodo(props.id);
-            return props.getTodos();
+            props.getTodos();
         } catch (error) {
             if (error instanceof Error) {
                 setError("Произошла ошибка при удалении задачи: " + error.message);
@@ -61,18 +69,18 @@ const Todo = memo (function Todo(props: TodoProps) {
                 setError("Произошла неизвестная ошибка при удалении задачи: " + error);
             }
         }
-    }, [props.id, props.getTodos()])
+    }
 
-    const onEditTodo = useCallback((e: FormEvent) => {
+    const onEditTodo = (e: FormEvent) => {
         e.preventDefault();
         setIsEditing(true);
-    }, [])
+    }
 
-    const onCancelTodoChanges = useCallback(() => {
+    const onCancelTodoChanges = () => {
         setIsEditing(false);
         form.setFieldsValue({ todoTitle: props.title });
         setIsDone(props.isDone);
-    }, [form, props.title, props.isDone])
+    }
 
     return (
         <>
