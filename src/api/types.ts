@@ -3,9 +3,10 @@ export interface TodoRequest {
     isDone?: boolean;
 }
 
-export interface TodoInterface {
+export interface Todo {
     id: number;
     title: string;
+    created?: string; // ISO date string
     isDone: boolean;
 }
 
@@ -22,3 +23,9 @@ export interface MetaResponse<T, N> {
         totalAmount: number
     }
 }
+
+export interface TodosByFilter {
+    status: 'all' | 'completed' | 'inWork'
+}
+
+export type NotificationType = 'success' | 'info' | 'warning' | 'error';

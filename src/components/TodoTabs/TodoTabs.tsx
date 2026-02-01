@@ -1,10 +1,10 @@
 import { Tabs } from 'antd';
 import type { TabsProps } from 'antd';
 import {type Dispatch, type SetStateAction} from 'react';
-import type {TodoInfo} from "../../api/types.ts";
+import type {TodoInfo, TodosByFilter} from "../../api/types.ts";
 
 interface TodoTabsProps {
-    setTodoFilter: Dispatch<SetStateAction<string>>
+    setTodoFilter: Dispatch<SetStateAction<TodosByFilter>>
     todoInfo: TodoInfo;
 }
 
@@ -26,7 +26,7 @@ const TodoTabs = ({setTodoFilter, todoInfo}: TodoTabsProps) => {
     ];
 
     const onChange = (key: string) => {
-        setTodoFilter(key);
+        setTodoFilter(key as unknown as TodosByFilter);
     }
 
     return <Tabs style={{marginTop: '0.5rem'}} defaultActiveKey="all" items={items} onChange={onChange}/>

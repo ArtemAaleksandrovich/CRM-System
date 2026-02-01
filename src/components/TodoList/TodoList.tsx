@@ -1,12 +1,12 @@
-import Todo from '../Todo/Todo.tsx'
-import type { TodoInterface } from "../../api/types.ts";
+import TodoCard from '../Todo/TodoCard.tsx'
+import type { Todo } from "../../api/types.ts";
 import { Card, Space } from "antd";
 import {memo} from "react";
 
 
 interface TodoListProps {
     getTodos(): void;
-    todos: TodoInterface[];
+    todos: Todo[];
 }
 
 const TodoList = memo(({todos, getTodos}: TodoListProps) => {
@@ -15,9 +15,9 @@ const TodoList = memo(({todos, getTodos}: TodoListProps) => {
             orientation="vertical"
             size={10}
         >
-            {todos?.map((item: TodoInterface) => (
+            {todos?.map((item: Todo) => (
                 <Card size="small" variant="borderless" key={item.id}>
-                    <Todo
+                    <TodoCard
                         id={item.id}
                         title={item.title}
                         isDone={item.isDone}

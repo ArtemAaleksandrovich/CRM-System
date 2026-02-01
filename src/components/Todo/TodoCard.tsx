@@ -1,17 +1,19 @@
-import {Flex, type FormProps, Alert, Form, Input, Image} from 'antd';
+import {Flex, type FormProps, Form, Input, notification} from 'antd';
+import type {NotificationType} from "../../api/types.ts";
+import {
+    CloseOutlined,
+    FormOutlined,
+    DeleteOutlined,
+    CheckOutlined,
+} from '@ant-design/icons';
 import {type FormEvent, memo, useState} from 'react';
-import styles from './Todo.module.scss'
+import styles from './TodoCard.module.scss'
 import {deleteTodo, updateTodo} from "../../api/api.ts";
 import CheckBox from "../../ui/CheckBox/CheckBox.tsx";
-import type {TodoInterface} from "../../api/types.ts";
+import type {Todo} from "../../api/types.ts";
 import IconButton from "../../ui/IconButton/IconButton.tsx";
 
-import edit_svg from "../../assets/edit_todo.svg"
-import delete_svg from "../../assets/delete_todo.svg"
-import save_svg from "../../assets/save.svg"
-import cancel_svg from "../../assets/cancel.svg"
-
-interface TodoProps extends TodoInterface {
+interface TodoProps extends Todo {
     getTodos(): void,
 }
 
@@ -19,12 +21,18 @@ interface FieldType {
     todoTitle: string;
 }
 
-
-const Todo = memo ((props: TodoProps) => {
+const TodoCard = memo ((props: TodoProps) => {
     const [form] = Form.useForm();
     const [isDone, setIsDone] = useState<boolean>(props.isDone);
     const [isEditing, setIsEditing] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+    const [api, contextHolder] = notification.useNotification();
+
+    const openNotificationWithIcon = (type: NotificationType, error: string) => {
+        api[type]({
+            title: 'Ошибка!',
+            description: error,
+        });
+    };
 
     const onFinish: FormProps<FieldType>['onFinish'] = async (values: FieldType) => {
         try {
@@ -33,9 +41,9 @@ const Todo = memo ((props: TodoProps) => {
             setIsEditing(false)
         } catch(error) {
             if (error instanceof Error) {
-                setError("Произошла ошибка при обновлении всей задачи: " + error.message);
+                openNotificationWithIcon('error', "Произошла ошибка при обновлении всей задачи: " + error.message);
             } else {
-                setError("Неизвестная ошибка при обновлении всей задачи! " + error);
+                openNotificationWithIcon('error', "Неизвестная ошибка при обновлении всей задачи! " + error);
             }
             form.setFieldsValue({ todoTitle: props.title });
         }
@@ -50,9 +58,9 @@ const Todo = memo ((props: TodoProps) => {
                 setIsDone((done) => !done)
             } catch(error) {
                 if (error instanceof Error) {
-                    setError("Произошла ошибка при обновлении статуса задачи: " + error.message);
+                    openNotificationWithIcon('error', "Произошла ошибка при обновлении статуса задачи: " + error.message);
                 } else {
-                    setError("Неизвестная ошибка при обновлении статуса задачи! " + error);
+                    openNotificationWithIcon('error', "Неизвестная ошибка при обновлении статуса задачи! " + error);
                 }
             }
         }
@@ -64,9 +72,9 @@ const Todo = memo ((props: TodoProps) => {
             props.getTodos();
         } catch (error) {
             if (error instanceof Error) {
-                setError("Произошла ошибка при удалении задачи: " + error.message);
+                openNotificationWithIcon('error', "Произошла ошибка при удалении задачи: " + error.message);
             } else {
-                setError("Произошла неизвестная ошибка при удалении задачи: " + error);
+                openNotificationWithIcon('error', "Произошла неизвестная ошибка при удалении задачи: " + error);
             }
         }
     }
@@ -84,6 +92,7 @@ const Todo = memo ((props: TodoProps) => {
 
     return (
         <>
+            {contextHolder}
             <Form
                 layout={'inline'}
                 form={form}
@@ -97,13 +106,16 @@ const Todo = memo ((props: TodoProps) => {
                             name="todoTitle"
                             rules={[
                                 { validator: (_, value) => {
-                                        if (!value || value.trim().length === 0) {
-                                            return Promise.reject(new Error('Поле не может быть пустым (пробелы не учитываются)'))
-                                        } else if (value.length < 2 || value.length > 65) {
-                                            return Promise.reject(new Error('Текст должен быть от 2 до 64 символов'))
-                                        }
-                                        return Promise.resolve()
-                                    }}
+                                    if (!value || value.trim().length === 0) {
+                                        return Promise.reject(new Error('Поле не может быть пустым (пробелы не учитываются)'))
+                                    }
+                                    return Promise.resolve()
+                                }},
+                                {
+                                    min: 2,
+                                    max: 64,
+                                    message: 'Текст должен быть от 2 до 64 символов'
+                                }
                             ]}
                         >
                             <Input className={`${styles.input} ${isDone ? styles.checked: ""} ${!isEditing ? styles.pointerNone : styles.inputEditing}`}/>
@@ -113,28 +125,27 @@ const Todo = memo ((props: TodoProps) => {
                         {!isEditing ? (
                             <Flex className={styles.buttonList}>
                                 <IconButton color="primary" type="button" action={onEditTodo}>
-                                    <Image style={{width: '20px', height: '20px'}} preview={false} src={edit_svg} alt="Edit"/>
+                                    <FormOutlined />
                                 </IconButton>
                                 <IconButton color="danger" type="button" action={onDeleteTodo}>
-                                    <Image style={{width: '25px', height: '25px'}} preview={false} src={delete_svg} alt="Delete"/>
+                                    <DeleteOutlined />
                                 </IconButton>
                             </Flex>
                         ) : (
                             <Flex className={styles.buttonList}>
                                 <IconButton color="success" type="submit">
-                                    <Image style={{width: '17px', height: '17px'}} preview={false} src={save_svg} alt="Save"/>
+                                    <CheckOutlined />
                                 </IconButton>
                                 <IconButton color="secondary" type="button" action={onCancelTodoChanges}>
-                                    <Image style={{width: '25px', height: '25px'}} preview={false} src={cancel_svg} alt="Cancel"/>
+                                    <CloseOutlined />
                                 </IconButton>
                             </Flex>
                         )}
                     </Form.Item>
                 </Flex>
             </Form>
-            {error && <Alert title={error} type='error' closable={{ closeIcon: true, 'aria-label': 'close' }} style={{width: '400px'}} onClick={() => setError(null)}/>}
         </>
     );
 });
 
-export default Todo;
+export default TodoCard;

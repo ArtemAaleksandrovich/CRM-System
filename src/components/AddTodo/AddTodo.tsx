@@ -1,7 +1,8 @@
-import {Alert, type FormProps} from 'antd';
-import { Button, Form, Input } from 'antd';
+import { type FormProps} from 'antd';
+import { Button, Form, Input, notification  } from 'antd';
 import {type ChangeEvent, useState} from 'react';
 import {createTodo} from "../../api/api.ts";
+import type {NotificationType} from "../../api/types.ts";
 
 interface AddTodoProps {
     getTodos(): void;
@@ -14,7 +15,14 @@ interface FieldType {
 const AddTodo = ({getTodos}: AddTodoProps) => {
     const [form] = Form.useForm();
     const [title, setTitle] = useState<string>('');
-    const [error, setError] = useState<string | null>(null);
+    const [api, contextHolder] = notification.useNotification();
+
+    const openNotificationWithIcon = (type: NotificationType, error: string) => {
+        api[type]({
+            title: 'Ошибка!',
+            description: error,
+        });
+    };
 
     const onFinish: FormProps<FieldType>['onFinish'] = async (values: FieldType) => {
         try {
@@ -24,9 +32,9 @@ const AddTodo = ({getTodos}: AddTodoProps) => {
             form.resetFields()
         } catch (error) {
             if (error instanceof Error) {
-                setError("Произошла ошибка при создании задачи: " + error.message);
+                openNotificationWithIcon('error', "Произошла ошибка при создании задачи: " + error.message);
             } else {
-                setError("Неизвестная ошибка при создании задачи! " + error);
+                openNotificationWithIcon('error', "Неизвестная ошибка при создании задачи! " + error);
             }
         }
     };
@@ -37,6 +45,7 @@ const AddTodo = ({getTodos}: AddTodoProps) => {
 
     return (
         <>
+            {contextHolder}
             <Form
                 layout={'inline'}
                 form={form}
@@ -48,11 +57,14 @@ const AddTodo = ({getTodos}: AddTodoProps) => {
                         { validator: (_, value = title) => {
                             if (value.trim().length === 0) {
                                 return Promise.reject(new Error('Поле не может быть пустым (пробелы не учитываются)'))
-                            } else if (value.length < 2 || value.length > 65) {
-                                return Promise.reject(new Error('Текст должен быть от 2 до 64 символов'))
                             }
                             return Promise.resolve()
-                        }}
+                        }},
+                        {
+                            min: 2,
+                            max: 64,
+                            message: 'Текст должен быть от 2 до 64 символов'
+                        }
                     ]}
                 >
                     <Input style={{width: '280px', height: '43px'}} onChange={onChangeTextTodo} value={title} placeholder="Задача для выполнения..." />
@@ -61,7 +73,6 @@ const AddTodo = ({getTodos}: AddTodoProps) => {
                     <Button style={{width: '113px', height: '43px', backgroundColor: '#3596e6'}} type="primary" htmlType="submit">Добавить</Button>
                 </Form.Item>
             </Form>
-            {error && <Alert title={error} type='error' closable={{ closeIcon: true, 'aria-label': 'close' }} onClick={() => setError(null)}/>}
         </>
     );
 };
