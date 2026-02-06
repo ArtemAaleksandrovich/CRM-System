@@ -1,10 +1,10 @@
-import { Tabs } from 'antd';
-import type { TabsProps } from 'antd';
+import type {TabsProps} from 'antd';
+import {Tabs} from 'antd';
 import {type Dispatch, type SetStateAction} from 'react';
-import type {TodoInfo, TodosByFilter} from "../../api/types.ts";
+import {type TodoInfo, TodosFilter} from "../../api/types.ts";
 
 interface TodoTabsProps {
-    setTodoFilter: Dispatch<SetStateAction<TodosByFilter>>
+    setTodoFilter: Dispatch<SetStateAction<TodosFilter>>
     todoInfo: TodoInfo;
 }
 
@@ -12,24 +12,26 @@ const TodoTabs = ({setTodoFilter, todoInfo}: TodoTabsProps) => {
 
     const items: TabsProps['items'] = [
         {
-            key: 'all',
+            key: TodosFilter.ALL,
             label: `Все(${todoInfo.all})`,
         },
         {
-            key: 'inWork',
+            key: TodosFilter.IN_WORK,
             label: `В работе(${todoInfo.inWork})`,
         },
         {
-            key: 'completed',
+            key: TodosFilter.COMPLETED,
             label: `Сделано(${todoInfo.completed})`,
         },
     ];
 
     const onChange = (key: string) => {
-        setTodoFilter(key as unknown as TodosByFilter);
+        if (key === TodosFilter.COMPLETED || key === TodosFilter.IN_WORK || key === TodosFilter.ALL) {
+            setTodoFilter(key);
+        }
     }
 
-    return <Tabs style={{marginTop: '0.5rem'}} defaultActiveKey="all" items={items} onChange={onChange}/>
+    return <Tabs style={{marginTop: '0.5rem'}} defaultActiveKey={TodosFilter.ALL} items={items} onChange={onChange}/>
 };
 
 export default TodoTabs;

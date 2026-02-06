@@ -2,10 +2,10 @@ import axios from "axios";
 const api = axios.create(
     {baseURL: 'https://easydev.club/api/v1'}
 );
-import type {Todo, TodoRequest, MetaResponse, TodoInfo, TodosByFilter} from './types.ts'
+import type {Todo, TodoRequest, MetaResponse, TodoInfo, TodosFilter} from './types.ts'
 
 
-export const getTodosByFilter = async (status: TodosByFilter): Promise<MetaResponse<Todo, TodoInfo>> => {
+export const getTodosByFilter = async (status: TodosFilter): Promise<MetaResponse<Todo, TodoInfo>> => {
     try {
         const response = await api.get('/todos', {
             params: {filter: status}
@@ -16,16 +16,17 @@ export const getTodosByFilter = async (status: TodosByFilter): Promise<MetaRespo
     }
 }
 
-export const createTodo: (params: TodoRequest) => Promise<Todo> = async (params: TodoRequest) => {
+export const createTodo = async (params: TodoRequest): Promise<Todo> => {
     try {
         const response = await api.post('/todos', params)
+
         return await response.data;
     } catch {
         throw new Error("Ошибка в POST-запросе при создании задачи");
     }
 }
 
-export const updateTodo: ({id, title, isDone}: Todo) => Promise<Todo> = async ({id, title, isDone}: Todo) => {
+export const updateTodo = async ({id, title, isDone}: Todo): Promise<Todo> => {
     try {
         const response = await api.put(`/todos/${id}`, {title, isDone})
         return await response.data;
@@ -34,7 +35,7 @@ export const updateTodo: ({id, title, isDone}: Todo) => Promise<Todo> = async ({
     }
 }
 
-export const deleteTodo: (id: number) => Promise<void> = async (id: number) => {
+export const deleteTodo = async (id: number): Promise<void> => {
     try {
         await api.delete(`/todos/${id}`)
     } catch {

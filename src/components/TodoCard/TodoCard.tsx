@@ -1,5 +1,4 @@
 import {Flex, type FormProps, Form, Input, notification} from 'antd';
-import type {NotificationType} from "../../api/types.ts";
 import {
     CloseOutlined,
     FormOutlined,
@@ -12,6 +11,7 @@ import {deleteTodo, updateTodo} from "../../api/api.ts";
 import CheckBox from "../../ui/CheckBox/CheckBox.tsx";
 import type {Todo} from "../../api/types.ts";
 import IconButton from "../../ui/IconButton/IconButton.tsx";
+import {MAX_LENGTH, MIN_LENGTH} from "../../constants/constants.ts";
 
 interface TodoProps extends Todo {
     getTodos(): void,
@@ -27,13 +27,6 @@ const TodoCard = memo ((props: TodoProps) => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [api, contextHolder] = notification.useNotification();
 
-    const openNotificationWithIcon = (type: NotificationType, error: string) => {
-        api[type]({
-            title: 'Ошибка!',
-            description: error,
-        });
-    };
-
     const onFinish: FormProps<FieldType>['onFinish'] = async (values: FieldType) => {
         try {
             await updateTodo({id: props.id, title: values.todoTitle, isDone: isDone})
@@ -41,9 +34,15 @@ const TodoCard = memo ((props: TodoProps) => {
             setIsEditing(false)
         } catch(error) {
             if (error instanceof Error) {
-                openNotificationWithIcon('error', "Произошла ошибка при обновлении всей задачи: " + error.message);
+                api['error']({
+                    title: 'Ошибка!',
+                    description: "Произошла ошибка при обновлении всей задачи: " + error.message,
+                });
             } else {
-                openNotificationWithIcon('error', "Неизвестная ошибка при обновлении всей задачи! " + error);
+                api['error']({
+                    title: 'Ошибка!',
+                    description: "Неизвестная ошибка при обновлении всей задачи! " + error,
+                });
             }
             form.setFieldsValue({ todoTitle: props.title });
         }
@@ -58,9 +57,15 @@ const TodoCard = memo ((props: TodoProps) => {
                 setIsDone((done) => !done)
             } catch(error) {
                 if (error instanceof Error) {
-                    openNotificationWithIcon('error', "Произошла ошибка при обновлении статуса задачи: " + error.message);
+                    api['error']({
+                        title: 'Ошибка!',
+                        description: "Произошла ошибка при обновлении статуса задачи: " + error.message,
+                    });
                 } else {
-                    openNotificationWithIcon('error', "Неизвестная ошибка при обновлении статуса задачи! " + error);
+                    api['error']({
+                        title: 'Ошибка!',
+                        description: "Неизвестная ошибка при обновлении статуса задачи! " + error,
+                    });
                 }
             }
         }
@@ -72,9 +77,15 @@ const TodoCard = memo ((props: TodoProps) => {
             props.getTodos();
         } catch (error) {
             if (error instanceof Error) {
-                openNotificationWithIcon('error', "Произошла ошибка при удалении задачи: " + error.message);
+                api['error']({
+                    title: 'Ошибка!',
+                    description: "Произошла ошибка при удалении задачи: " + error.message,
+                });
             } else {
-                openNotificationWithIcon('error', "Произошла неизвестная ошибка при удалении задачи: " + error);
+                api['error']({
+                    title: 'Ошибка!',
+                    description: "Произошла неизвестная ошибка при удалении задачи: " + error,
+                });
             }
         }
     }
@@ -112,8 +123,8 @@ const TodoCard = memo ((props: TodoProps) => {
                                     return Promise.resolve()
                                 }},
                                 {
-                                    min: 2,
-                                    max: 64,
+                                    min: MIN_LENGTH,
+                                    max: MAX_LENGTH,
                                     message: 'Текст должен быть от 2 до 64 символов'
                                 }
                             ]}

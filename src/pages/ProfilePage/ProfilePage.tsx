@@ -25,8 +25,8 @@ function ProfilePage() {
                     size={200}
                     orientation="vertical"
                 >
-                    <Title> Profile </Title>
-                    <Title> Привет!😊 </Title>
+                    <Title level={1}> Profile </Title>
+                    <Title level={2}> Привет! </Title>
                 </Space>
             </ConfigProvider>
         </Layout>

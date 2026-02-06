@@ -2,26 +2,18 @@ import AddTodo from '../../components/AddTodo/AddTodo.tsx'
 import TodoTabs from '../../components/TodoTabs/TodoTabs.tsx'
 import TodoList from '../../components/TodoList/TodoList.tsx'
 import {useCallback, useEffect, useRef, useState} from "react";
-import { getTodosByFilter } from '../../api/api.ts'
-import type { Todo, TodoInfo, TodosByFilter } from '../../api/types.ts'
+import {getTodosByFilter} from '../../api/api.ts'
+import {type Todo, type TodoInfo, TodosFilter} from '../../api/types.ts'
 import {Layout, notification, Typography} from "antd";
-import type {NotificationType} from "../../api/types.ts";
 
 const { Title } = Typography;
 
 
 function TodoListPage() {
     const [todos, setTodos] = useState<Todo[]>([])
-    const [todoFilter, setTodoFilter] = useState<TodosByFilter>({status: 'all'})
+    const [todoFilter, setTodoFilter] = useState<TodosFilter>(TodosFilter.ALL)
     const [todoInfo, setTodoInfo] = useState<TodoInfo>({all: 0, inWork: 0, completed: 0})
     const [api, contextHolder] = notification.useNotification();
-
-    const openNotificationWithIcon = (type: NotificationType, error: string) => {
-        api[type]({
-            title: 'Ошибка!',
-            description: error,
-        });
-    };
 
     const todosRef = useRef<Todo[]>([])
 
@@ -48,9 +40,15 @@ function TodoListPage() {
             setTodoInfo(response.info);
         } catch(error) {
             if (error instanceof Error) {
-                openNotificationWithIcon('error', "Ошибка при обновлении страницы! " + error.message);
+                api['error']({
+                    title: 'Ошибка!',
+                    description: "Ошибка при обновлении страницы! " + error.message,
+                });
             } else {
-                openNotificationWithIcon('error', "Неизвестная ошибка при обновлении страницы! " + error);
+                api['error']({
+                    title: 'Ошибка!',
+                    description: "Неизвестная ошибка при обновлении страницы! " + error,
+                });
             }
         }
     }, [todoFilter])
@@ -68,7 +66,7 @@ function TodoListPage() {
         <>
             {contextHolder}
             <Layout style={layoutStyle}>
-                <Title style={{fontSize: 50, fontFamily: 'Roboto'}}> TODO List </Title>
+                <Title style={{fontSize: 50, fontFamily: 'Roboto sans, sans-serif'}}> TODO List </Title>
                 <AddTodo getTodos={getTodos} />
                 <TodoTabs setTodoFilter={setTodoFilter} todoInfo={todoInfo} />
                 <TodoList todos={todos} getTodos={getTodos}/>

@@ -18,14 +18,14 @@ export interface TodoInfo {
 
 export interface MetaResponse<T, N> {
     data: T[]
-    info: N // изменил с info? на info (он по идее всегда должен быть)
+    info: N
     meta: {
         totalAmount: number
     }
 }
 
-export interface TodosByFilter {
-    status: 'all' | 'completed' | 'inWork'
+export enum TodosFilter {
+    ALL = 'all' ,
+    COMPLETED = 'completed',
+    IN_WORK = 'inWork'
 }
-
-export type NotificationType = 'success' | 'info' | 'warning' | 'error';

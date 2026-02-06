@@ -1,4 +1,4 @@
-import TodoCard from '../Todo/TodoCard.tsx'
+import TodoCard from '../TodoCard/TodoCard.tsx'
 import type { Todo } from "../../api/types.ts";
 import { Card, Space } from "antd";
 import {memo} from "react";
