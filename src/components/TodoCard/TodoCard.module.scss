@@ -1,0 +1,22 @@
+.input {
+  border: none;
+  width: 250px;
+  height: 45px;
+}
+
+.checked {
+  text-decoration: line-through;
+}
+
+.pointerNone {
+  pointer-events: none;
+}
+
+.inputEditing {
+  width: 270px;
+}
+
+.buttonList {
+  display: flex;
+  gap: 0.5rem;
+}

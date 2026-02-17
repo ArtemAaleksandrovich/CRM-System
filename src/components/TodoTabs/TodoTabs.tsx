@@ -1,25 +1,37 @@
-import {useState, type Dispatch, type SetStateAction} from 'react';
-import styles from './TodoTabs.module.scss'
-import type {TodoInfo} from "../../api/types.ts";
+import type {TabsProps} from 'antd';
+import {Tabs} from 'antd';
+import {type Dispatch, type SetStateAction} from 'react';
+import {type TodoInfo, TodosFilter} from "../../api/types.ts";
 
 interface TodoTabsProps {
-    setTodoFilter: Dispatch<SetStateAction<string>>
+    setTodoFilter: Dispatch<SetStateAction<TodosFilter>>
     todoInfo: TodoInfo;
 }
 
-function TodoTabs({setTodoFilter, todoInfo}: TodoTabsProps) {
-    const [activeFilter, setActiveFilter] = useState<string>('all');
+const TodoTabs = ({setTodoFilter, todoInfo}: TodoTabsProps) => {
 
-    const onChangeFilter = (filter: string) => {
-        setTodoFilter(filter);
-        setActiveFilter(filter);
+    const items: TabsProps['items'] = [
+        {
+            key: TodosFilter.ALL,
+            label: `Все(${todoInfo.all})`,
+        },
+        {
+            key: TodosFilter.IN_WORK,
+            label: `В работе(${todoInfo.inWork})`,
+        },
+        {
+            key: TodosFilter.COMPLETED,
+            label: `Сделано(${todoInfo.completed})`,
+        },
+    ];
+
+    const onChange = (key: string) => {
+        if (key === TodosFilter.COMPLETED || key === TodosFilter.IN_WORK || key === TodosFilter.ALL) {
+            setTodoFilter(key);
+        }
     }
-    return (
-        <nav>
-            <button className={`${styles.button} ${activeFilter === 'all' ? styles.active : ''}`} onClick={() => onChangeFilter('all')}>Все({todoInfo.all})</button>
-            <button className={`${styles.button} ${activeFilter === 'inWork' ? styles.active : ''}`} onClick={() => onChangeFilter('inWork')}>В работе({todoInfo.inWork})</button>
-            <button className={`${styles.button} ${activeFilter === 'completed' ? styles.active : ''}`} onClick={() => onChangeFilter('completed')}>Сделано({todoInfo.completed})</button>
-        </nav>
-    )
-}
+
+    return <Tabs style={{marginTop: '0.5rem'}} defaultActiveKey={TodosFilter.ALL} items={items} onChange={onChange}/>
+};
+
 export default TodoTabs;

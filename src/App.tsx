@@ -1,11 +1,13 @@
-import './App.scss'
-import TodoListPage from './pages/TodoListPage.tsx'
+import Sidebar from "./components/Sidebar/Sidebar.tsx";
+import {Flex} from "antd";
+import TodoRouter from "./routes/TodoRouter.tsx";
 
 function App() {
   return (
-      <div className="wrapper">
-          <TodoListPage/>
-      </div>
+      <Flex>
+          <Sidebar/>
+          <TodoRouter/>
+      </Flex>
   )
 }
 

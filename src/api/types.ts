@@ -3,9 +3,10 @@ export interface TodoRequest {
     isDone?: boolean;
 }
 
-export interface TodoInterface {
+export interface Todo {
     id: number;
     title: string;
+    created?: string; // ISO date string
     isDone: boolean;
 }
 
@@ -17,8 +18,14 @@ export interface TodoInfo {
 
 export interface MetaResponse<T, N> {
     data: T[]
-    info?: N
+    info: N
     meta: {
         totalAmount: number
     }
+}
+
+export enum TodosFilter {
+    ALL = 'all' ,
+    COMPLETED = 'completed',
+    IN_WORK = 'inWork'
 }

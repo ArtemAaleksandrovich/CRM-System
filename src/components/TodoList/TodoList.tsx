@@ -1,27 +1,32 @@
-import Todo from '../Todo/Todo.tsx'
-import styles from './TodoList.module.scss'
-import type { TodoInterface } from "../../api/types.ts";
+import TodoCard from '../TodoCard/TodoCard.tsx'
+import type { Todo } from "../../api/types.ts";
+import { Card, Space } from "antd";
+import {memo} from "react";
+
 
 interface TodoListProps {
     getTodos(): void;
-    todos: TodoInterface[];
+    todos: Todo[];
 }
 
-function TodoList({todos, getTodos}: TodoListProps) {
+const TodoList = memo(({todos, getTodos}: TodoListProps) => {
     return (
-        <ul className={styles.ul}>
-            {todos?.map((item: TodoInterface) => (
-                <li className={styles.li} key={item.id}>
-                    <Todo
+        <Space
+            orientation="vertical"
+            size={10}
+        >
+            {todos?.map((item: Todo) => (
+                <Card size="small" variant="borderless" key={item.id}>
+                    <TodoCard
                         id={item.id}
                         title={item.title}
                         isDone={item.isDone}
                         getTodos={getTodos}
                     />
-                </li>
+                </Card>
             ))}
-        </ul>
+        </Space>
     )
-}
+})
 
 export default TodoList;
