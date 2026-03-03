@@ -2,7 +2,7 @@ import { type FormProps} from 'antd';
 import { Button, Form, Input, notification  } from 'antd';
 
 import {createTodo} from "../../api/api.ts";
-import {MAX_LENGTH, MIN_LENGTH} from "../../constants/constants.ts";
+import {MAX_LENGTH_TODOS, MIN_LENGTH_TODOS} from "../../constants/constants.ts";
 import {useState} from "react";
 
 interface AddTodoProps {
@@ -41,8 +41,6 @@ const AddTodo = ({getTodos}: AddTodoProps) => {
         }
     };
 
-
-
     return (
         <>
             {contextHolder}
@@ -61,8 +59,8 @@ const AddTodo = ({getTodos}: AddTodoProps) => {
                             return Promise.resolve()
                         }},
                         {
-                            min: MIN_LENGTH,
-                            max: MAX_LENGTH,
+                            min: MIN_LENGTH_TODOS,
+                            max: MAX_LENGTH_TODOS,
                             message: 'Текст должен быть от 2 до 64 символов'
                         }
                     ]}

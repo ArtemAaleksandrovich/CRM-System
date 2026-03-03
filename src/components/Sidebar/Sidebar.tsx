@@ -16,7 +16,6 @@ const Sidebar = () => {
     const location = useLocation();
     const currentPath = location.pathname;
 
-
     const items: MenuItem[] = [
         { label: <Link to="/">TODO List</Link>, key: '/', icon: <AppstoreAddOutlined /> },
         { label: <Link to="/profile">Profile</Link>, key: '/profile', icon: <UserOutlined /> },

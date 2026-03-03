@@ -14,6 +14,7 @@ function TodoListPage() {
     const [todoFilter, setTodoFilter] = useState<TodosFilter>(TodosFilter.ALL)
     const [todoInfo, setTodoInfo] = useState<TodoInfo>({all: 0, inWork: 0, completed: 0})
     const [api, contextHolder] = notification.useNotification();
+    const [loading, setLoading] = useState<boolean>(true);
 
     const todosRef = useRef<Todo[]>([])
 
@@ -50,6 +51,8 @@ function TodoListPage() {
                     description: "Неизвестная ошибка при обновлении страницы! " + error,
                 });
             }
+        } finally {
+            setLoading(false);
         }
     }, [todoFilter])
 
@@ -69,7 +72,7 @@ function TodoListPage() {
                 <Title style={{fontSize: 50, fontFamily: 'Roboto sans, sans-serif'}}> TODO List </Title>
                 <AddTodo getTodos={getTodos} />
                 <TodoTabs setTodoFilter={setTodoFilter} todoInfo={todoInfo} />
-                <TodoList todos={todos} getTodos={getTodos}/>
+                <TodoList todos={todos} getTodos={getTodos} loading={loading} />
             </Layout>
         </>
     )

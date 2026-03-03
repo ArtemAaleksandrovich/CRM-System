@@ -11,7 +11,7 @@ import {deleteTodo, updateTodo} from "../../api/api.ts";
 import CheckBox from "../../ui/CheckBox/CheckBox.tsx";
 import type {Todo} from "../../api/types.ts";
 import IconButton from "../../ui/IconButton/IconButton.tsx";
-import {MAX_LENGTH, MIN_LENGTH} from "../../constants/constants.ts";
+import {MAX_LENGTH_TODOS, MIN_LENGTH_TODOS} from "../../constants/constants.ts";
 
 interface TodoProps extends Todo {
     getTodos(): void,
@@ -123,8 +123,8 @@ const TodoCard = memo ((props: TodoProps) => {
                                     return Promise.resolve()
                                 }},
                                 {
-                                    min: MIN_LENGTH,
-                                    max: MAX_LENGTH,
+                                    min: MIN_LENGTH_TODOS,
+                                    max: MAX_LENGTH_TODOS,
                                     message: 'Текст должен быть от 2 до 64 символов'
                                 }
                             ]}
