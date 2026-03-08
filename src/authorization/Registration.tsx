@@ -1,6 +1,6 @@
-import {type FormProps, Layout, notification, Space, Typography} from 'antd';
+import {type FormProps, Layout, Modal, notification, Space, Typography} from 'antd';
 import { Button, Form, Input } from 'antd';
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {signUp} from "../api/api.ts";
 import type {UserRegistration} from "../api/types.ts";
 import {
@@ -38,7 +38,7 @@ const layoutStyle = {
 };
 
 const Registration = () => {
-    const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
     const [api, contextHolder] = notification.useNotification();
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -47,7 +47,7 @@ const Registration = () => {
         try {
             const response = await signUp({username: values.username,login: values.login, password: values.password, email: values.email, phoneNumber: values.phoneNumber});
             if (response){
-                navigate('/');
+                setOpen(true);
             }
         } catch (error) {
             if (error instanceof Error) {
@@ -65,6 +65,10 @@ const Registration = () => {
             setLoading(false);
         }
     };
+
+    const handleCancel = () => {
+        setOpen(false);
+    }
 
     return (
         <>
@@ -94,7 +98,7 @@ const Registration = () => {
                                 }
                             ]}
                         >
-                            <Input placeholder="Username" addonBefore={<UserAddOutlined style={{ color: 'gray' }}/>}/>
+                            <Input placeholder="Имя пользователя" addonBefore={<UserAddOutlined style={{ color: 'gray' }}/>}/>
                         </Form.Item>
 
                         <Form.Item<FieldType>
@@ -115,20 +119,35 @@ const Registration = () => {
                                 }
                             ]}
                         >
-                            <Input placeholder="Login" addonBefore={<UserOutlined style={{ color: 'gray' }}/>}/>
+                            <Input placeholder="Логин" addonBefore={<UserOutlined style={{ color: 'gray' }}/>}/>
                         </Form.Item>
 
                         <Form.Item<FieldType>
                             name="email"
-                            rules={[{required: true, message: 'Введите почту!'}]}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Введите почту!'
+                                },
+                                {
+                                    type: 'email',
+                                    message: 'Почта введена некорректно!'
+                                }
+                            ]}
                         >
-                            <Input placeholder="Email" addonBefore={<MailOutlined style={{ color: 'gray' }}/>}/>
+                            <Input placeholder="Почта" addonBefore={<MailOutlined style={{ color: 'gray' }}/>}/>
                         </Form.Item>
 
                         <Form.Item<FieldType>
                             name="phoneNumber"
+                            rules={[
+                                {
+                                    pattern: /^\+?[1-9][0-9]{7,14}$/,
+                                    message: 'Номер телефона введен некорректно!'
+                                }
+                            ]}
                         >
-                            <Input placeholder="Phone number" addonBefore={<PhoneOutlined style={{ color: 'gray' }}/>}/>
+                            <Input placeholder="Номер телефона" addonBefore={<PhoneOutlined style={{ color: 'gray' }}/>}/>
                         </Form.Item>
 
                         <Form.Item<FieldType>
@@ -145,7 +164,7 @@ const Registration = () => {
                                 },
                             ]}
                         >
-                            <Input.Password placeholder="Password" addonBefore={<LockOutlined  style={{ color: 'gray' }}/>}/>
+                            <Input.Password placeholder="Пароль" addonBefore={<LockOutlined  style={{ color: 'gray' }}/>}/>
                         </Form.Item>
 
                         <Form.Item<FieldType>
@@ -167,7 +186,7 @@ const Registration = () => {
                                 }),
                             ]}
                         >
-                            <Input.Password placeholder="Repeat password" addonBefore={<UnlockOutlined  style={{ color: 'gray' }}/>}/>
+                            <Input.Password placeholder="Повторите пароль" addonBefore={<UnlockOutlined  style={{ color: 'gray' }}/>}/>
                         </Form.Item>
 
                         <Space size={40} orientation="horizontal">
@@ -176,8 +195,16 @@ const Registration = () => {
                             </Button>
                         </Space>
                     </Form>
-                    <Title level={5} style={{color: 'gray'}}> Have an account? <Link to="/">Log In</Link> </Title>
+                    <Title level={5} style={{color: 'gray'}}> Have an account? <Link to="/auth">Log In</Link> </Title>
                 </Space>
+                <Modal
+                    open={open}
+                    centered
+                    footer={null}
+                    onCancel={handleCancel}
+                >
+                    Вы успешно зарегистрировались! Если хотите перейти к авторизации, нажмите <Link to="/auth">здесь!</Link>
+                </Modal>
             </Layout>
         </>
     )

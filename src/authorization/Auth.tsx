@@ -79,14 +79,14 @@ const Auth = () => {
                             name="login"
                             rules={[{required: true, message: 'Введите логин!'}]}
                         >
-                            <Input placeholder="Login" addonBefore={<UserOutlined style={{ color: 'gray' }}/>}/>
+                            <Input placeholder="Логин" addonBefore={<UserOutlined style={{ color: 'gray' }}/>}/>
                         </Form.Item>
 
                         <Form.Item<FieldType>
                             name="password"
                             rules={[{required: true, message: 'Введите пароль!'}]}
                         >
-                            <Input.Password placeholder="Password" addonBefore={<LockOutlined  style={{ color: 'gray' }}/>}/>
+                            <Input.Password placeholder="Пароль" addonBefore={<LockOutlined  style={{ color: 'gray' }}/>}/>
                         </Form.Item>
 
                         <Flex gap={60}>
@@ -103,7 +103,7 @@ const Auth = () => {
                             </Button>
                         </Space>
                     </Form>
-                    <Title level={5} style={{color: 'gray'}}> Not Registered Yet? <Link to="/signup">Create an account</Link>
+                    <Title level={5} style={{color: 'gray'}}> Not Registered Yet? <Link to="/auth/signup">Create an account</Link>
                     </Title>
                 </Space>
             </Layout>

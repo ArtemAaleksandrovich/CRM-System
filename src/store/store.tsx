@@ -14,10 +14,9 @@ const authSlice = createSlice({
         },
         setAuth(state, action) {
             state.isAuthenticated = action.payload;
-        },
+        }
     },
 })
-
 
 
 const store = configureStore({

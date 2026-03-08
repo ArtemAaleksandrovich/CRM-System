@@ -9,7 +9,6 @@ import type {
     RefreshToken,
     UserRegistration, Token, Profile, ProfileRequest, PasswordRequest
 } from './types.ts'
-
 const BASE_URL = 'https://easydev.club/api/v1';
 
 const api = axios.create(
@@ -17,8 +16,6 @@ const api = axios.create(
         baseURL: BASE_URL
     }
 );
-
-
 
 export const getTodosByFilter = async (status: TodosFilter): Promise<MetaResponse<Todo, TodoInfo>> => {
     try {
@@ -64,22 +61,22 @@ api.interceptors.request.use(config => {
     return config;
 })
 
-api.interceptors.response.use( async config => {
+api.interceptors.response.use(async config => {
     return config;
 }, async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && originalRequest._retry) {
-        originalRequest._retry = false;
+    if (error.response.status === 401 && !originalRequest._retry) {
+        console.log("Ошибка словилась в обработку 401 ошибки");
+        originalRequest._retry = true;
         try {
             const token = localStorage.getItem('refresh_token');
             if (token) {
-                const response = await refreshToken({refreshToken: token});
-                if (response) {
-                    return api.request(originalRequest);
-                }
+                await refreshToken({refreshToken: token});
+                return api.request(originalRequest);
             }
         } catch (error) {
             console.log("interceptor error:", error);
+            window.location.href = '/auth';
         }
     }
 })
@@ -88,14 +85,16 @@ export const getProfile = async (): Promise<Profile> => {
     try {
         const response = await api.get('/user/profile');
         return await response.data;
-    } catch {
+    } catch (error){
         throw new Error("Ошибка при получении профиля!");
     }
 }
 
 export const updateProfile = async (params: ProfileRequest): Promise<Profile> => {
     try {
-        const response = await api.post('/user/profile', params);
+        console.log(params);
+        const response = await api.put('/user/profile', params);
+        console.log(response);
         return await response.data;
     } catch {
         throw new Error("Ошибка при обновлении профиля!");
@@ -134,12 +133,26 @@ export const logOut = async (): Promise<void> => {
     }
 }
 
+export const resetPassword = async (params: PasswordRequest): Promise<void> => {
+    try {
+        const response = await api.put('/user/profile/reset-password', params);
+        return await response.data;
+    } catch {
+        throw new Error("Ошибка при сбросе пароля!");
+    }
+}
+
+const refreshApi = axios.create(
+    {
+        baseURL: BASE_URL
+    }
+);
+
 export const refreshToken = async (token: RefreshToken): Promise<Token> => {
     try {
-        const response = await api.post('/auth/refresh', token);
-        console.log(localStorage.getItem('refresh_token'))
+        const response = await refreshApi.post('/auth/refresh', token);
         if (response) {
-            localStorage.setItem('access_token', response.data.accessToken)
+            localStorage.setItem('access_token', response.data.accessToken);
             localStorage.setItem('refresh_token', response.data.refreshToken);
         }
         return await response.data;
@@ -147,14 +160,5 @@ export const refreshToken = async (token: RefreshToken): Promise<Token> => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         throw new Error("Ошибка при обновлении токена!");
-    }
-}
-
-export const resetPassword = async (params: PasswordRequest): Promise<void> => {
-    try {
-        const response = await api.post('/user/profile/reset-password', params);
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при сбросе пароля!");
     }
 }
