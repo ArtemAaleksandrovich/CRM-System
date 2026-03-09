@@ -8,7 +8,7 @@ import {Image, type MenuProps} from 'antd';
 import { Layout, Menu } from 'antd';
 import {useSelector} from "react-redux";
 import type {RootState} from "../../store/store.tsx";
-
+import authImage from "../../assets/auth.png"
 const { Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -32,7 +32,7 @@ const Sidebar = () => {
                 </Sider>
             </Layout>
             :
-            <Image preview={false} style={{width: '540px', height: '540px'}} src="/src/image/auth.png" />
+            <Image preview={false} style={{width: '540px', height: '540px'}} src={authImage} />
     );
 };
 

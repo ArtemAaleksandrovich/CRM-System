@@ -13,7 +13,9 @@ function App() {
 
     // вызываю юз эффект, функцию чекаус
     useEffect(() => {
-        checkAuth()
+        setTimeout(() => {
+            checkAuth()
+        }, 500)
     }, []);
 
 
@@ -36,7 +38,6 @@ function App() {
             if (token) {
                 const response = await refreshToken({refreshToken: token})
                 if (response) {
-                    console.log('success');
                     dispatch(authActions.setAuth(true))
                 }
             } else {
