@@ -34,7 +34,6 @@ const layoutStyle = {
     overflow: 'auto',
 };
 function ProfilePage() {
-
     const [exitLoading, setExitLoading] = useState<boolean>(false);
     const [user, setUser] = useState<User | null>(null)
     const dispatch = useDispatch();
@@ -42,7 +41,7 @@ function ProfilePage() {
 
     useEffect(() => {
         getUser()
-    }, [open]);
+    }, []);
 
     const getUser: () => Promise<void> = async () => {
         try {
