@@ -19,9 +19,8 @@ type FieldType = {
 
 const layoutStyle = {
     backgroundColor: '#f1f7f9',
-    width: '500px',
-    height: '450px',
-    overflow: 'auto',
+    width: '450px',
+    height: '500px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -68,7 +67,7 @@ const Auth = () => {
                     size={40}
                     orientation="vertical"
                 >
-                    <Title level={1}> Login to your Account! </Title>
+                    <Title level={2}> Login to your Account </Title>
                     <Form
                         name="basic"
                         initialValues={{remember: true}}

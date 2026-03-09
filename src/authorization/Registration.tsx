@@ -29,9 +29,8 @@ interface FieldType extends UserRegistration{
 
 const layoutStyle = {
     backgroundColor: '#f1f7f9',
-    width: '500px',
-    height: '620px',
-    overflow: 'auto',
+    width: '450px',
+    height: '550px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -76,10 +75,10 @@ const Registration = () => {
             <Layout style={layoutStyle}>
                 <Space
                     style={{display: 'flex', alignItems: 'center'}}
-                    size={40}
+                    size={10}
                     orientation="vertical"
                 >
-                    <Title level={1}> Create Account! </Title>
+                    <Title level={2}> Create Account </Title>
                     <Form
                         name="basic"
                         onFinish={onFinish}

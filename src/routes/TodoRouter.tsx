@@ -4,11 +4,21 @@ import ProfilePage from "../pages/ProfilePage/ProfilePage.tsx";
 import Registration from "../authorization/Registration.tsx";
 import Auth from "../authorization/Auth.tsx";
 import Sidebar from "../components/Sidebar/Sidebar.tsx";
-import {Flex} from "antd";
+import {Flex, Space} from "antd";
 
 interface RouterProps {
     isAuth: boolean;
 }
+
+const layoutStyle = {
+    backgroundColor: '#f1f7f9',
+    width: '1000px',
+    height: '550px',
+    overflow: 'auto',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+};
 
 export function TodoRouter({isAuth}: RouterProps) {
 
@@ -28,7 +38,10 @@ export function TodoRouter({isAuth}: RouterProps) {
             return <Navigate to={"/"} />
         }
         return (
-            <Outlet/>
+            <Space style={layoutStyle} orientation="horizontal" size={-10}>
+                <Sidebar/>
+                <Outlet/>
+            </Space>
         )
     }
 

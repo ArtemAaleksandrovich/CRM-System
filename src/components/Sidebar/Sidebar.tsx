@@ -4,14 +4,17 @@ import {
     AppstoreAddOutlined,
     UserOutlined,
 } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
+import {Image, type MenuProps} from 'antd';
 import { Layout, Menu } from 'antd';
+import {useSelector} from "react-redux";
+import type {RootState} from "../../store/store.tsx";
 
 const { Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
 const Sidebar = () => {
+    const isAuthenticated = useSelector((state:RootState) => state.auth.isAuthenticated);
     const [collapsed, setCollapsed] = useState<boolean>(false);
     const location = useLocation();
     const currentPath = location.pathname;
@@ -22,11 +25,14 @@ const Sidebar = () => {
     ];
 
     return (
-        <Layout>
-            <Sider style={{backgroundColor: '#f1f7f9', borderRight: '1px solid grey'}} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                <Menu style={{backgroundColor: '#f1f7f9'}} defaultSelectedKeys={[currentPath]} mode="inline" items={items} />
-            </Sider>
-        </Layout>
+        isAuthenticated ?
+            <Layout style={{ height: '100vh' }}>
+                <Sider style={{backgroundColor: '#f1f7f9', borderRight: '1px solid grey'}} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                    <Menu style={{backgroundColor: '#f1f7f9'}} defaultSelectedKeys={[currentPath]} mode="inline" items={items} />
+                </Sider>
+            </Layout>
+            :
+            <Image preview={false} style={{width: '540px', height: '540px'}} src="/src/image/auth.png" />
     );
 };
 
