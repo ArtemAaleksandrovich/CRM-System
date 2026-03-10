@@ -7,7 +7,7 @@ import {
 import {Image, type MenuProps} from 'antd';
 import { Layout, Menu } from 'antd';
 import {useSelector} from "react-redux";
-import type {RootState} from "../../store/store.tsx";
+import type {RootState} from "../../store/store.ts";
 import authImage from "../../assets/auth.png"
 const { Sider } = Layout;
 

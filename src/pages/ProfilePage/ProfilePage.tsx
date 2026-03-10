@@ -10,7 +10,7 @@ import {
 import {useEffect, useState} from "react";
 import {getProfile, logOut} from "../../api/api.ts";
 import {useDispatch} from "react-redux";
-import {authActions} from "../../store/store.tsx";
+import {authActions} from "../../store/store.ts";
 
 interface User {
     username: string;

@@ -9,6 +9,9 @@ import type {
     RefreshToken,
     UserRegistration, Token, Profile, ProfileRequest, PasswordRequest
 } from './types.ts'
+
+import {accessToken} from "../utils/accessToken.ts"
+
 const BASE_URL = 'https://easydev.club/api/v1';
 
 const api = axios.create(
@@ -57,7 +60,7 @@ export const deleteTodo = async (id: number): Promise<void> => {
 //---------------------------------------------------------------------------------
 
 api.interceptors.request.use(config => {
-    config.headers.Authorization = `Bearer ${localStorage.getItem('access_token')}`
+    config.headers.Authorization = `Bearer ${accessToken.getToken()}`
     return config;
 })
 
@@ -92,9 +95,7 @@ export const getProfile = async (): Promise<Profile> => {
 
 export const updateProfile = async (params: ProfileRequest): Promise<Profile> => {
     try {
-        console.log(params);
         const response = await api.put('/user/profile', params);
-        console.log(response);
         return await response.data;
     } catch {
         throw new Error("Ошибка при обновлении профиля!");
@@ -105,12 +106,12 @@ export const signIn = async (params: AuthData): Promise<Token>  => {
     try {
         const response = await api.post('/auth/signin', params);
 
-        localStorage.setItem('access_token', response.data.accessToken);
         localStorage.setItem('refresh_token', response.data.refreshToken);
+        accessToken.setToken(response.data.accessToken);
 
         return await response.data;
     } catch (error) {
-        throw new Error("Ошибка при авторизации! Неверные учетные данные!");
+        throw new Error("Ошибка при авторизации! Неверные учетные данные!" + error);
     }
 }
 
@@ -126,8 +127,8 @@ export const signUp = async (params: UserRegistration): Promise<Profile> => {
 export const logOut = async (): Promise<void> => {
     try {
         await api.post('/user/logout');
-        localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
+        accessToken.setToken(null);
     } catch {
         throw new Error("Ошибка при выходе с аккаунта!");
     }
@@ -152,13 +153,13 @@ export const refreshToken = async (token: RefreshToken): Promise<Token> => {
     try {
         const response = await refreshApi.post('/auth/refresh', token);
         if (response) {
-            localStorage.setItem('access_token', response.data.accessToken);
             localStorage.setItem('refresh_token', response.data.refreshToken);
+            accessToken.setToken(response.data.accessToken);
         }
         return await response.data;
     } catch {
-        localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
+        accessToken.setToken(null);
         throw new Error("Ошибка при обновлении токена!");
     }
 }

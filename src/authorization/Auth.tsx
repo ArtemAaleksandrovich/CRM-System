@@ -2,13 +2,13 @@ import {Checkbox, Flex, type FormProps, Layout, notification, Space, Typography}
 import { Button, Form, Input } from 'antd';
 import {Link} from "react-router-dom";
 import {signIn} from "../api/api.ts";
-import {authActions} from '../store/store.tsx'
-import {useDispatch} from "react-redux";
 import {
     UserOutlined,
     LockOutlined,
 } from '@ant-design/icons';
 import {useState} from "react";
+import {authActions} from "../store/store.ts";
+import {useDispatch} from "react-redux";
 const { Title } = Typography;
 
 type FieldType = {
@@ -54,10 +54,6 @@ const Auth = () => {
         }
     };
 
-    const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-        console.log('Failed:', errorInfo);
-    };
-
     return (
         <>
             {contextHolder}
@@ -72,7 +68,6 @@ const Auth = () => {
                         name="basic"
                         initialValues={{remember: true}}
                         onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
                     >
                         <Form.Item<FieldType>
                             name="login"
