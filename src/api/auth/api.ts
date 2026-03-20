@@ -1,16 +1,15 @@
 import axios from "axios";
 import type {
-    Todo,
-    TodoRequest,
-    MetaResponse,
-    TodoInfo,
-    TodosFilter,
     AuthData,
     RefreshToken,
-    UserRegistration, Token, Profile, ProfileRequest, PasswordRequest
-} from './types.ts'
-
-import {accessToken} from "../utils/accessToken.ts"
+    UserRegistration,
+    Token, Profile,
+    ProfileRequest,
+    PasswordRequest
+} from '../../types/auth/types.ts'
+import {accessToken} from "../../utils/accessToken.ts"
+import store from '../../store/store.ts'
+import {authActions} from "../../store/slices/authSlice/authSlice.ts";
 
 const BASE_URL = 'https://easydev.club/api/v1';
 
@@ -19,45 +18,6 @@ const api = axios.create(
         baseURL: BASE_URL
     }
 );
-
-export const getTodosByFilter = async (status: TodosFilter): Promise<MetaResponse<Todo, TodoInfo>> => {
-    try {
-        const response = await api.get('/todos', {
-            params: {filter: status}
-        });
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при получении задач с БД");
-    }
-}
-
-export const createTodo = async (params: TodoRequest): Promise<Todo> => {
-    try {
-        const response = await api.post('/todos', params)
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при создании задачи");
-    }
-}
-
-export const updateTodo = async ({id, title, isDone}: Todo): Promise<Todo> => {
-    try {
-        const response = await api.put(`/todos/${id}`, {title, isDone})
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при обновлении задачи");
-    }
-}
-
-export const deleteTodo = async (id: number): Promise<void> => {
-    try {
-        await api.delete(`/todos/${id}`)
-    } catch {
-        throw new Error("Ошибка при удалении задачи");
-    }
-}
-
-//---------------------------------------------------------------------------------
 
 api.interceptors.request.use(config => {
     config.headers.Authorization = `Bearer ${accessToken.getToken()}`
@@ -68,9 +28,8 @@ api.interceptors.response.use(async config => {
     return config;
 }, async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
-        console.log("Ошибка словилась в обработку 401 ошибки");
-        originalRequest._retry = true;
+    if (error.response.status === 401 && !originalRequest._isRetry) {
+        originalRequest._isRetry = true;
         try {
             const token = localStorage.getItem('refresh_token');
             if (token) {
@@ -78,8 +37,8 @@ api.interceptors.response.use(async config => {
                 return api.request(originalRequest);
             }
         } catch (error) {
-            console.log("interceptor error:", error);
-            window.location.href = '/auth';
+            store.dispatch(authActions.logout())
+            throw new Error("Ошибка в интерцепторе!");
         }
     }
 })
@@ -111,7 +70,7 @@ export const signIn = async (params: AuthData): Promise<Token>  => {
 
         return await response.data;
     } catch (error) {
-        throw new Error("Ошибка при авторизации! Неверные учетные данные!" + error);
+        throw new Error("Ошибка при авторизации! Неверные учетные данные!");
     }
 }
 

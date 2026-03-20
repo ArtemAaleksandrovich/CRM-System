@@ -8,9 +8,10 @@ import {
     Typography,
 } from "antd";
 import {useEffect, useState} from "react";
-import {getProfile, logOut} from "../../api/api.ts";
+import {getProfile, logOut} from "../../api/auth/api.ts";
 import {useDispatch} from "react-redux";
-import {authActions} from "../../store/store.ts";
+import {authActions} from "../../store/slices/authSlice/authSlice.ts";
+import type {AppDispatch} from "../../store/store.ts";
 
 interface User {
     username: string;
@@ -34,9 +35,9 @@ const layoutStyle = {
     overflow: 'auto',
 };
 function ProfilePage() {
-    const [exitLoading, setExitLoading] = useState<boolean>(false);
+    const [isExitLoading, setIsExitLoading] = useState<boolean>(false);
     const [user, setUser] = useState<User | null>(null)
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
@@ -63,7 +64,7 @@ function ProfilePage() {
     }
 
     const handleLogout = async () => {
-        setExitLoading(true)
+        setIsExitLoading(true)
         try {
             await logOut()
         } catch (error) {
@@ -114,7 +115,7 @@ function ProfilePage() {
                             size={5}
                             orientation="vertical"
                         >
-                            <Button danger style={{width: 300}} loading={exitLoading} onClick={handleLogout}>
+                            <Button danger style={{width: 300}} loading={isExitLoading} onClick={handleLogout}>
                                 Выход
                             </Button>
                         </Space>

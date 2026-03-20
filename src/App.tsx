@@ -1,14 +1,23 @@
 import {Flex, Spin} from "antd";
 import {useDispatch, useSelector} from "react-redux";
-import {TodoRouter} from "./routes/TodoRouter.tsx";
-import {type RootState, authActions} from './store/store.ts'
+import {Router} from "./routes/Router.tsx";
+import {type AppDispatch, type RootState} from './store/store.ts'
+import {authActions} from "./store/slices/authSlice/authSlice.ts";
 import {useEffect, useState} from "react";
-import {refreshToken} from "./api/api.ts";
+import {refreshToken} from "./api/auth/api.ts";
+import {useNavigate} from "react-router-dom";
 
 function App() {
-    const isAuthenticated = useSelector((state:RootState) => state.auth.isAuthenticated);
-    const [isLoading, setIsLoading] = useState(true);
-    const dispatch = useDispatch();
+    const isAuthenticated: boolean = useSelector((state:RootState) => state.auth.isAuthenticated);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const dispatch: AppDispatch = useDispatch();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isAuthenticated){
+            navigate("/auth");
+        }
+    }, [isAuthenticated]);
 
     useEffect(() => {
         setTimeout(() => {
@@ -16,7 +25,7 @@ function App() {
         }, 500)
     }, []);
 
-    const checkAuth = async () => {
+    const checkAuth: () => Promise<void> = async () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('refresh_token');
@@ -45,7 +54,7 @@ function App() {
 
     return (
       <Flex justify={'center'} align={'center'} style={{height:'100vh'}}>
-          <TodoRouter isAuth={isAuthenticated}/>
+          <Router isAuth={isAuthenticated}/>
       </Flex>
   )
 }

@@ -2,9 +2,11 @@ import AddTodo from '../../components/AddTodo/AddTodo.tsx'
 import TodoTabs from '../../components/TodoTabs/TodoTabs.tsx'
 import TodoList from '../../components/TodoList/TodoList.tsx'
 import {useCallback, useEffect, useRef, useState} from "react";
-import {getTodosByFilter} from '../../api/api.ts'
-import {type Todo, type TodoInfo, TodosFilter} from '../../api/types.ts'
+import {getTodosByFilter} from '../../api/todos/api.ts'
+import {type Todo, type TodoInfo, TodosFilter} from '../../types/todos/types.ts'
 import {Layout, notification, Typography} from "antd";
+import {useSelector} from "react-redux";
+import type {RootState} from "../../store/store.ts";
 
 const { Title } = Typography;
 
@@ -14,8 +16,8 @@ function TodoListPage() {
     const [todoFilter, setTodoFilter] = useState<TodosFilter>(TodosFilter.ALL)
     const [todoInfo, setTodoInfo] = useState<TodoInfo>({all: 0, inWork: 0, completed: 0})
     const [api, contextHolder] = notification.useNotification();
-    const [loading, setLoading] = useState<boolean>(true);
-
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const isAuthenticated = useSelector((state:RootState) => state.auth.isAuthenticated);
     const todosRef = useRef<Todo[]>([])
 
     useEffect(() => {
@@ -23,7 +25,9 @@ function TodoListPage() {
     }, [todos]);
 
     useEffect(() => {
-        getTodos()
+        if (isAuthenticated) {
+            getTodos()
+        }
         const interval = setInterval(getTodos, 5000);
         return () => {clearInterval(interval)}
     }, [todoFilter]);
@@ -52,7 +56,7 @@ function TodoListPage() {
                 });
             }
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
     }, [todoFilter])
 
@@ -72,7 +76,7 @@ function TodoListPage() {
                 <Title style={{fontSize: 50, fontFamily: 'Roboto sans, sans-serif'}}> TODO List </Title>
                 <AddTodo getTodos={getTodos} />
                 <TodoTabs setTodoFilter={setTodoFilter} todoInfo={todoInfo} />
-                <TodoList todos={todos} getTodos={getTodos} loading={loading} />
+                <TodoList todos={todos} getTodos={getTodos} loading={isLoading} />
             </Layout>
         </>
     )

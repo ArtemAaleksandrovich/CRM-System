@@ -4,7 +4,9 @@ import ProfilePage from "../pages/ProfilePage/ProfilePage.tsx";
 import Registration from "../authorization/Registration.tsx";
 import Auth from "../authorization/Auth.tsx";
 import Sidebar from "../components/Sidebar/Sidebar.tsx";
-import {Flex, Space} from "antd";
+import authImage from "../assets/auth.png"
+import {Flex, Space, Image} from "antd";
+import type {JSX} from "react";
 
 interface RouterProps {
     isAuth: boolean;
@@ -20,9 +22,9 @@ const layoutStyle = {
     justifyContent: 'center',
 };
 
-export function TodoRouter({isAuth}: RouterProps) {
+export function Router({isAuth}: RouterProps): JSX.Element {
 
-    const ProtectedAuthRoute = ({isAuth}: {isAuth: boolean}) => {
+    const ProtectedAuthRoute = ({isAuth}: RouterProps): JSX.Element => {
         if (!isAuth) {
             return <Navigate to={"/auth"} />
         }
@@ -33,13 +35,13 @@ export function TodoRouter({isAuth}: RouterProps) {
             </Flex>
         )
     }
-    const ProtectedNoAuthRoute = ({isAuth}: {isAuth: boolean}) => {
+    const ProtectedNoAuthRoute = ({isAuth}: RouterProps): JSX.Element => {
         if (isAuth) {
             return <Navigate to={"/"} />
         }
         return (
             <Space style={layoutStyle} orientation="horizontal" size={-10}>
-                <Sidebar/>
+                <Image preview={false} style={{width: '540px', height: '540px'}} src={authImage} />
                 <Outlet/>
             </Space>
         )

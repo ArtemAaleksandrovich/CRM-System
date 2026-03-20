@@ -7,9 +7,9 @@ import {
 } from '@ant-design/icons';
 import {type FormEvent, memo, useState} from 'react';
 import styles from './TodoCard.module.scss'
-import {deleteTodo, updateTodo} from "../../api/api.ts";
+import {deleteTodo, updateTodo} from "../../api/todos/api.ts";
 import CheckBox from "../../ui/CheckBox/CheckBox.tsx";
-import type {Todo} from "../../api/types.ts";
+import type {Todo} from "../../types/todos/types.ts";
 import IconButton from "../../ui/IconButton/IconButton.tsx";
 import {MAX_LENGTH_TODOS, MIN_LENGTH_TODOS} from "../../constants/constants.ts";
 
@@ -27,7 +27,7 @@ const TodoCard = memo ((props: TodoProps) => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [api, contextHolder] = notification.useNotification();
 
-    const onFinish: FormProps<FieldType>['onFinish'] = async (values: FieldType) => {
+    const onFinishUpdateTodo: FormProps<FieldType>['onFinish'] = async (values: FieldType) => {
         try {
             await updateTodo({id: props.id, title: values.todoTitle, isDone: isDone})
             props.getTodos()
@@ -108,7 +108,7 @@ const TodoCard = memo ((props: TodoProps) => {
                 layout={'inline'}
                 form={form}
                 initialValues={{ todoTitle: props.title }}
-                onFinish={onFinish}
+                onFinish={onFinishUpdateTodo}
             >
                 <Flex align={'flex-start'}>
                     <Flex align={'center'}>

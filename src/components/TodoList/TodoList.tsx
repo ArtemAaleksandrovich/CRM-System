@@ -1,5 +1,5 @@
 import TodoCard from '../TodoCard/TodoCard.tsx'
-import type { Todo } from "../../api/types.ts";
+import type { Todo } from "../../types/todos/types.ts";
 import {Card, Flex, Space, Spin} from "antd";
 import {memo} from "react";
 
@@ -16,9 +16,11 @@ const TodoList = memo(({todos, getTodos, loading}: TodoListProps) => {
             orientation="vertical"
             size={10}
         >
-            <Flex justify={"center"} align={"center"} style={{height: "500px"}}>
-                {loading && <Spin size="large"/>}
-            </Flex>
+            {loading &&
+                <Flex justify={"center"} align={"center"} style={{height: "500px"}}>
+                    <Spin size="large"/>
+                </Flex>
+            }
             {todos?.map((item: Todo) => (
                 <Card size="small" variant="borderless" key={item.id}>
                     <TodoCard

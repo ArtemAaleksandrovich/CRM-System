@@ -1,7 +1,7 @@
 import type {TabsProps} from 'antd';
 import {Tabs} from 'antd';
 import {type Dispatch, type SetStateAction} from 'react';
-import {type TodoInfo, TodosFilter} from "../../api/types.ts";
+import {type TodoInfo, TodosFilter} from "../../types/todos/types.ts";
 
 interface TodoTabsProps {
     setTodoFilter: Dispatch<SetStateAction<TodosFilter>>

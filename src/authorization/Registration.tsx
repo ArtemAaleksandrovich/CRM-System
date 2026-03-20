@@ -1,8 +1,8 @@
 import {type FormProps, Layout, Modal, notification, Space, Typography} from 'antd';
 import { Button, Form, Input } from 'antd';
 import {Link} from "react-router-dom";
-import {signUp} from "../api/api.ts";
-import type {UserRegistration} from "../api/types.ts";
+import {signUp} from "../api/auth/api.ts";
+import type {UserRegistration} from "../types/auth/types.ts";
 import {
     MAX_LENGTH_LOGIN,
     MIN_LENGTH_LOGIN,
@@ -37,16 +37,16 @@ const layoutStyle = {
 };
 
 const Registration = () => {
-    const [open, setOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
     const [api, contextHolder] = notification.useNotification();
-    const [loading, setLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
-        setLoading(true);
+    const onFinishRegistration: FormProps<FieldType>['onFinish'] = async (values) => {
+        setIsLoading(true);
         try {
             const response = await signUp({username: values.username,login: values.login, password: values.password, email: values.email, phoneNumber: values.phoneNumber});
             if (response){
-                setOpen(true);
+                setIsOpen(true);
             }
         } catch (error) {
             if (error instanceof Error) {
@@ -61,12 +61,12 @@ const Registration = () => {
                 });
             }
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
     };
 
     const handleCancel = () => {
-        setOpen(false);
+        setIsOpen(false);
     }
 
     return (
@@ -81,7 +81,7 @@ const Registration = () => {
                     <Title level={2}> Create Account </Title>
                     <Form
                         name="basic"
-                        onFinish={onFinish}
+                        onFinish={onFinishRegistration}
                     >
                         <Form.Item<FieldType>
                             name="username"
@@ -189,7 +189,7 @@ const Registration = () => {
                         </Form.Item>
 
                         <Space size={40} orientation="horizontal">
-                            <Button type="primary" style={{width: 300}} loading={loading} htmlType="submit">
+                            <Button type="primary" style={{width: 300}} loading={isLoading} htmlType="submit">
                                 Sign Up
                             </Button>
                         </Space>
@@ -197,7 +197,7 @@ const Registration = () => {
                     <Title level={5} style={{color: 'gray'}}> Have an account? <Link to="/auth">Log In</Link> </Title>
                 </Space>
                 <Modal
-                    open={open}
+                    open={isOpen}
                     centered
                     footer={null}
                     onCancel={handleCancel}

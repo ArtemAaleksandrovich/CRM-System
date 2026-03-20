@@ -1,7 +1,7 @@
 import { type FormProps} from 'antd';
 import { Button, Form, Input, notification  } from 'antd';
 
-import {createTodo} from "../../api/api.ts";
+import {createTodo} from "../../api/todos/api.ts";
 import {MAX_LENGTH_TODOS, MIN_LENGTH_TODOS} from "../../constants/constants.ts";
 import {useState} from "react";
 
@@ -18,7 +18,7 @@ const AddTodo = ({getTodos}: AddTodoProps) => {
     const [api, contextHolder] = notification.useNotification();
     const [loading, setLoading] = useState<boolean>(false);
 
-    const onFinish: FormProps<FieldType>['onFinish'] = async (values: FieldType) => {
+    const onFinishAddTodo: FormProps<FieldType>['onFinish'] = async (values: FieldType) => {
         setLoading(true);
         try {
             await createTodo({title: values.title, isDone: false})
@@ -47,7 +47,7 @@ const AddTodo = ({getTodos}: AddTodoProps) => {
             <Form
                 layout={'inline'}
                 form={form}
-                onFinish={onFinish}
+                onFinish={onFinishAddTodo}
             >
                 <Form.Item<FieldType>
                     name="title"

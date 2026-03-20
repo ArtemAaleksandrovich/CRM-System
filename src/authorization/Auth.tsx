@@ -1,14 +1,15 @@
 import {Checkbox, Flex, type FormProps, Layout, notification, Space, Typography} from 'antd';
 import { Button, Form, Input } from 'antd';
 import {Link} from "react-router-dom";
-import {signIn} from "../api/api.ts";
+import {signIn} from "../api/auth/api.ts";
 import {
     UserOutlined,
     LockOutlined,
 } from '@ant-design/icons';
 import {useState} from "react";
-import {authActions} from "../store/store.ts";
+import {authActions} from "../store/slices/authSlice/authSlice.ts";
 import {useDispatch} from "react-redux";
+import type {AppDispatch} from "../store/store.ts";
 const { Title } = Typography;
 
 type FieldType = {
@@ -28,12 +29,12 @@ const layoutStyle = {
 
 
 const Auth = () => {
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const [api, contextHolder] = notification.useNotification();
-    const [loading, setLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
-        setLoading(true);
+    const onFinishAuth: FormProps<FieldType>['onFinish'] = async (values) => {
+        setIsLoading(true);
         try {
             await signIn({login: values.login, password: values.password});
             dispatch(authActions.login())
@@ -50,7 +51,7 @@ const Auth = () => {
                 });
             }
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
     };
 
@@ -67,7 +68,7 @@ const Auth = () => {
                     <Form
                         name="basic"
                         initialValues={{remember: true}}
-                        onFinish={onFinish}
+                        onFinish={onFinishAuth}
                     >
                         <Form.Item<FieldType>
                             name="login"
@@ -92,7 +93,7 @@ const Auth = () => {
                         </Flex>
 
                         <Space size={40} orientation="horizontal">
-                            <Button type="primary" style={{width: 300}} loading={loading} htmlType="submit">
+                            <Button type="primary" style={{width: 300}} loading={isLoading} htmlType="submit">
                                 Login
                             </Button>
                         </Space>
