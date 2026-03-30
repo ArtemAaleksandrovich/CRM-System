@@ -1,8 +1,8 @@
 import {type FormProps, Layout, Modal, notification, Space, Typography} from 'antd';
 import { Button, Form, Input } from 'antd';
 import {Link} from "react-router-dom";
-import {signUp} from "../api/auth/api.ts";
-import type {UserRegistration} from "../types/auth/types.ts";
+import {signUp} from "../../api/auth/api.ts";
+import type {UserRegistration} from "../../types/auth/types.ts";
 import {
     MAX_LENGTH_LOGIN,
     MIN_LENGTH_LOGIN,
@@ -10,7 +10,7 @@ import {
     MIN_LENGTH_PASSWORD,
     MAX_LENGTH_USERNAME,
     MIN_LENGTH_USERNAME
-} from "../constants/constants.ts";
+} from "../../constants/constants.ts";
 import {
     UserOutlined,
     LockOutlined,
@@ -36,7 +36,7 @@ const layoutStyle = {
     justifyContent: 'center',
 };
 
-const Registration = () => {
+const RegistrationPage = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [api, contextHolder] = notification.useNotification();
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -209,4 +209,4 @@ const Registration = () => {
     )
 };
 
-export default Registration;
+export default RegistrationPage;

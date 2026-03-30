@@ -9,9 +9,10 @@ import {
 } from "antd";
 import {useEffect, useState} from "react";
 import {getProfile, logOut} from "../../api/auth/api.ts";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {authActions} from "../../store/slices/authSlice/authSlice.ts";
-import type {AppDispatch} from "../../store/store.ts";
+import type {AppDispatch, RootState} from "../../store/store.ts";
+import {type NavigateFunction, useNavigate} from "react-router-dom";
 
 interface User {
     username: string;
@@ -39,9 +40,15 @@ function ProfilePage() {
     const [user, setUser] = useState<User | null>(null)
     const dispatch: AppDispatch = useDispatch();
     const [api, contextHolder] = notification.useNotification();
+    const isAuthenticated: boolean = useSelector((state:RootState) => state.auth.isAuthenticated);
+    const navigate: NavigateFunction = useNavigate();
 
     useEffect(() => {
-        getUser()
+        if (isAuthenticated) {
+            getUser()
+        } else {
+            navigate("/auth");
+        }
     }, []);
 
     const getUser: () => Promise<void> = async () => {

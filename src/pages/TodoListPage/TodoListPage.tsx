@@ -7,6 +7,7 @@ import {type Todo, type TodoInfo, TodosFilter} from '../../types/todos/types.ts'
 import {Layout, notification, Typography} from "antd";
 import {useSelector} from "react-redux";
 import type {RootState} from "../../store/store.ts";
+import {type NavigateFunction, useNavigate} from "react-router-dom";
 
 const { Title } = Typography;
 
@@ -17,7 +18,8 @@ function TodoListPage() {
     const [todoInfo, setTodoInfo] = useState<TodoInfo>({all: 0, inWork: 0, completed: 0})
     const [api, contextHolder] = notification.useNotification();
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const isAuthenticated = useSelector((state:RootState) => state.auth.isAuthenticated);
+    const isAuthenticated: boolean = useSelector((state:RootState) => state.auth.isAuthenticated);
+    const navigate: NavigateFunction = useNavigate();
     const todosRef = useRef<Todo[]>([])
 
     useEffect(() => {
@@ -27,10 +29,12 @@ function TodoListPage() {
     useEffect(() => {
         if (isAuthenticated) {
             getTodos()
+        } else {
+            navigate("/auth");
         }
         const interval = setInterval(getTodos, 5000);
         return () => {clearInterval(interval)}
-    }, [todoFilter]);
+    }, [todoFilter, isAuthenticated]);
 
     function compare(a: Todo[], b: Todo[]) {
         return JSON.stringify(a) === JSON.stringify(b);

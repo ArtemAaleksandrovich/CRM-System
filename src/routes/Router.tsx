@@ -1,8 +1,8 @@
 import TodoListPage from '../pages/TodoListPage/TodoListPage.tsx'
 import {Navigate, Outlet, Route, Routes} from "react-router-dom";
 import ProfilePage from "../pages/ProfilePage/ProfilePage.tsx";
-import Registration from "../authorization/Registration.tsx";
-import Auth from "../authorization/Auth.tsx";
+import RegistrationPage from "../pages/RegistrationPage/RegistrationPage.tsx";
+import AuthPage from "../pages/AuthPage/AuthPage.tsx";
 import Sidebar from "../components/Sidebar/Sidebar.tsx";
 import authImage from "../assets/auth.png"
 import {Flex, Space, Image} from "antd";
@@ -24,7 +24,7 @@ const layoutStyle = {
 
 export function Router({isAuth}: RouterProps): JSX.Element {
 
-    const ProtectedAuthRoute = ({isAuth}: RouterProps): JSX.Element => {
+    const AuthRoute = ({isAuth}: RouterProps): JSX.Element => {
         if (!isAuth) {
             return <Navigate to={"/auth"} />
         }
@@ -35,7 +35,7 @@ export function Router({isAuth}: RouterProps): JSX.Element {
             </Flex>
         )
     }
-    const ProtectedNoAuthRoute = ({isAuth}: RouterProps): JSX.Element => {
+    const NoAuthRoute = ({isAuth}: RouterProps): JSX.Element => {
         if (isAuth) {
             return <Navigate to={"/"} />
         }
@@ -49,14 +49,14 @@ export function Router({isAuth}: RouterProps): JSX.Element {
 
     return (
         <Routes>
-            <Route path="/" element={<ProtectedAuthRoute isAuth={isAuth}/>}>
+            <Route path="/" element={<AuthRoute isAuth={isAuth}/>}>
                 <Route index element={<TodoListPage/>} />
                 <Route path="profile" element={<ProfilePage/>} />
             </Route>
 
-            <Route path="/auth" element={<ProtectedNoAuthRoute isAuth={isAuth} />}>
-                <Route index element={<Auth/>} />
-                <Route path="signup" element={<Registration/>} />
+            <Route path="/auth" element={<NoAuthRoute isAuth={isAuth} />}>
+                <Route index element={<AuthPage/>} />
+                <Route path="signup" element={<RegistrationPage/>} />
             </Route>
         </Routes>
     )

@@ -5,28 +5,17 @@ import {type AppDispatch, type RootState} from './store/store.ts'
 import {authActions} from "./store/slices/authSlice/authSlice.ts";
 import {useEffect, useState} from "react";
 import {refreshToken} from "./api/auth/api.ts";
-import {useNavigate} from "react-router-dom";
 
 function App() {
     const isAuthenticated: boolean = useSelector((state:RootState) => state.auth.isAuthenticated);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const dispatch: AppDispatch = useDispatch();
-    const navigate = useNavigate();
 
     useEffect(() => {
-        if (!isAuthenticated){
-            navigate("/auth");
-        }
-    }, [isAuthenticated]);
-
-    useEffect(() => {
-        setTimeout(() => {
-            checkAuth()
-        }, 500)
+        checkAuth()
     }, []);
 
     const checkAuth: () => Promise<void> = async () => {
-        setIsLoading(true);
         try {
             const token = localStorage.getItem('refresh_token');
             if (token) {
