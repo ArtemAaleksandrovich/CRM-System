@@ -1,12 +1,14 @@
 import TodoListPage from '../pages/TodoListPage/TodoListPage.tsx'
 import {Navigate, Outlet, Route, Routes} from "react-router-dom";
-import ProfilePage from "../pages/ProfilePage/ProfilePage.tsx";
+import OwnProfilePage from "../pages/OwnProfilePage/OwnProfilePage.tsx";
 import RegistrationPage from "../pages/RegistrationPage/RegistrationPage.tsx";
+import UserListPage from "../pages/UserListPage/UserListPage.tsx";
 import AuthPage from "../pages/AuthPage/AuthPage.tsx";
 import Sidebar from "../components/Sidebar/Sidebar.tsx";
 import authImage from "../assets/auth.png"
 import {Flex, Space, Image} from "antd";
 import type {JSX} from "react";
+import UserProfilePage from "../pages/UserProfilePage/UserProfilePage.tsx";
 
 interface RouterProps {
     isAuth: boolean;
@@ -51,7 +53,9 @@ export function Router({isAuth}: RouterProps): JSX.Element {
         <Routes>
             <Route path="/" element={<AuthRoute isAuth={isAuth}/>}>
                 <Route index element={<TodoListPage/>} />
-                <Route path="profile" element={<ProfilePage/>} />
+                <Route path="profile" element={<OwnProfilePage/>} />
+                <Route path="users" element={<UserListPage/>} />
+                <Route path="users/user/:id" element={<UserProfilePage/>} />
             </Route>
 
             <Route path="/auth" element={<NoAuthRoute isAuth={isAuth} />}>

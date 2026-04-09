@@ -1,7 +1,7 @@
 import {Checkbox, Flex, type FormProps, Layout, notification, Space, Typography} from 'antd';
 import { Button, Form, Input } from 'antd';
 import {Link} from "react-router-dom";
-import {signIn} from "../../api/auth/api.ts";
+import {getProfile, signIn} from "../../api/auth/api.ts";
 import {
     UserOutlined,
     LockOutlined,
@@ -38,6 +38,9 @@ const AuthPage = () => {
         try {
             await signIn({login: values.login, password: values.password});
             dispatch(authActions.login())
+
+            const { roles } = await getProfile();
+            dispatch(authActions.setRoles(roles));
         } catch (error) {
             if (error instanceof Error) {
                 api['error']({

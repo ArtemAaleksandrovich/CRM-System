@@ -8,44 +8,21 @@ import type {
     PasswordRequest
 } from '../../types/auth/types.ts'
 import {accessToken} from "../../utils/accessToken.ts"
-import store from '../../store/store.ts'
-import {authActions} from "../../store/slices/authSlice/authSlice.ts";
+import {setupCommonInterceptors} from "../interceptors.ts";
 
 const BASE_URL = 'https://easydev.club/api/v1';
 
-const api = axios.create(
+const authApi = axios.create(
     {
         baseURL: BASE_URL
     }
 );
 
-api.interceptors.request.use(config => {
-    config.headers.Authorization = `Bearer ${accessToken.getToken()}`
-    return config;
-})
-
-api.interceptors.response.use(async config => {
-    return config;
-}, async (error) => {
-    const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._isRetry) {
-        originalRequest._isRetry = true;
-        try {
-            const token = localStorage.getItem('refresh_token');
-            if (token) {
-                await refreshToken({refreshToken: token});
-                return api.request(originalRequest);
-            }
-        } catch (error) {
-            store.dispatch(authActions.logout())
-            throw new Error("Ошибка в интерцепторе!");
-        }
-    }
-})
+setupCommonInterceptors(authApi);
 
 export const getProfile = async (): Promise<Profile> => {
     try {
-        const response = await api.get('/user/profile');
+        const response = await authApi.get('/user/profile');
         return await response.data;
     } catch (error){
         throw new Error("Ошибка при получении профиля!");
@@ -54,7 +31,7 @@ export const getProfile = async (): Promise<Profile> => {
 
 export const updateProfile = async (params: ProfileRequest): Promise<Profile> => {
     try {
-        const response = await api.put('/user/profile', params);
+        const response = await authApi.put('/user/profile', params);
         return await response.data;
     } catch {
         throw new Error("Ошибка при обновлении профиля!");
@@ -63,7 +40,7 @@ export const updateProfile = async (params: ProfileRequest): Promise<Profile> =>
 
 export const signIn = async (params: AuthData): Promise<Token>  => {
     try {
-        const response = await api.post('/auth/signin', params);
+        const response = await authApi.post('/auth/signin', params);
 
         localStorage.setItem('refresh_token', response.data.refreshToken);
         accessToken.setToken(response.data.accessToken);
@@ -76,7 +53,7 @@ export const signIn = async (params: AuthData): Promise<Token>  => {
 
 export const signUp = async (params: UserRegistration): Promise<Profile> => {
     try {
-        const response = await api.post('/auth/signup', params);
+        const response = await authApi.post('/auth/signup', params);
         return await response.data;
     } catch {
         throw new Error("Ошибка при регистрации!");
@@ -85,7 +62,7 @@ export const signUp = async (params: UserRegistration): Promise<Profile> => {
 
 export const logOut = async (): Promise<void> => {
     try {
-        await api.post('/user/logout');
+        await authApi.post('/user/logout');
         localStorage.removeItem('refresh_token');
         accessToken.setToken(null);
     } catch {
@@ -95,7 +72,7 @@ export const logOut = async (): Promise<void> => {
 
 export const resetPassword = async (params: PasswordRequest): Promise<void> => {
     try {
-        const response = await api.put('/user/profile/reset-password', params);
+        const response = await authApi.put('/user/profile/reset-password', params);
         return await response.data;
     } catch {
         throw new Error("Ошибка при сбросе пароля!");
