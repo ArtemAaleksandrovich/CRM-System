@@ -17,61 +17,61 @@ export const getUsersByFilter = async (userFilters: UserFilters): Promise<MetaRe
         const response = await adminApi.get('', {
             params: userFilters,
         });
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при получении списка пользователей с БД");
+        return response.data;
+    } catch (error) {
+        throw error;
     }
 }
 
 export const getUserById = async (id: number): Promise<User> => {
     try {
         const response = await adminApi.get(`/${id}`)
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при получении пользователя с БД");
+        return response.data;
+    } catch (error) {
+        throw error;
     }
 }
 
 export const updateUserRights = async (id: number, roles: UserRolesRequest): Promise<User> => {
     try {
         const response = await adminApi.post(`/${id}/rights`, roles)
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при обновлении прав пользователя");
+        return response.data;
+    } catch (error) {
+        throw error;
     }
 }
 
 export const updateUserData = async (id: number, data: UserRequest): Promise<User> => {
     try {
         const response = await adminApi.put(`/${id}`, data)
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при обновлении данных пользователя");
+        return response.data;
+    } catch (error) {
+        throw error;
     }
 }
 
 export const blockUser = async (id: number): Promise<User> => {
     try {
         const response = await adminApi.post(`/${id}/block`)
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при блокировке пользователя");
+        return response.data;
+    } catch (error) {
+        throw error;
     }
 }
 
 export const unblockUser = async (id: number): Promise<User> => {
     try {
         const response = await adminApi.post(`/${id}/unblock`)
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при разблокировке пользователя");
+        return response.data;
+    } catch (error) {
+        throw error;
     }
 }
 
 export const deleteUser = async (id: number): Promise<void> => {
     try {
         await adminApi.delete(`/${id}`)
-    } catch {
-        throw new Error("Ошибка при удалении пользователя");
+    } catch (error) {
+        throw error;
     }
 }

@@ -1,31 +1,20 @@
-import {Button, Modal} from "antd";
+import {ConfirmModal} from "./ConfirmModal.tsx";
 
-interface ModalProps {
-    openBlockUserModal: boolean,
+interface BlockModalProps {
+    isOpenBlockUserModal: boolean,
     handleCancelBlockUser(): void,
-    confirmLoading: boolean,
+    isConfirmLoading: boolean,
     confirmBlockUser(): Promise<void>
 }
 
-export function ConfirmBlockUserModal({openBlockUserModal, handleCancelBlockUser, confirmLoading, confirmBlockUser}: ModalProps) {
-
-    return <Modal
+export function ConfirmBlockUserModal(props: BlockModalProps) {
+    return <ConfirmModal
+        isOpen={props.isOpenBlockUserModal}
         title="Подтверждение блокировки пользователя"
-        centered
-        open={openBlockUserModal}
-        footer={
-            <>
-                <Button type="default" onClick={handleCancelBlockUser}>
-                    Отмена
-                </Button>
-                <Button danger loading={confirmLoading} onClick={confirmBlockUser} form="profileForm">
-                    Подтвердить действие
-                </Button>
-            </>
-        }
-        confirmLoading={confirmLoading}
-        onCancel={handleCancelBlockUser}
-    >
-        Вы уверены, что хотите заблокировать пользователя?
-    </Modal>
+        children="Вы уверены, что хотите заблокировать пользователя?"
+        confirmText="Подтвердить блокировку"
+        isConfirmLoading={props.isConfirmLoading}
+        onCancel={props.handleCancelBlockUser}
+        onConfirm={props.confirmBlockUser}
+    />
 }

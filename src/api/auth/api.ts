@@ -23,18 +23,18 @@ setupCommonInterceptors(authApi);
 export const getProfile = async (): Promise<Profile> => {
     try {
         const response = await authApi.get('/user/profile');
-        return await response.data;
+        return response.data;
     } catch (error){
-        throw new Error("Ошибка при получении профиля!");
+        throw error;
     }
 }
 
 export const updateProfile = async (params: ProfileRequest): Promise<Profile> => {
     try {
         const response = await authApi.put('/user/profile', params);
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при обновлении профиля!");
+        return response.data;
+    } catch (error){
+        throw error;
     }
 }
 
@@ -45,18 +45,18 @@ export const signIn = async (params: AuthData): Promise<Token>  => {
         localStorage.setItem('refresh_token', response.data.refreshToken);
         accessToken.setToken(response.data.accessToken);
 
-        return await response.data;
-    } catch (error) {
-        throw new Error("Ошибка при авторизации! Неверные учетные данные!");
+        return response.data;
+    } catch (error){
+        throw error;
     }
 }
 
 export const signUp = async (params: UserRegistration): Promise<Profile> => {
     try {
         const response = await authApi.post('/auth/signup', params);
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при регистрации!");
+        return response.data;
+    } catch (error){
+        throw error;
     }
 }
 
@@ -65,17 +65,17 @@ export const logOut = async (): Promise<void> => {
         await authApi.post('/user/logout');
         localStorage.removeItem('refresh_token');
         accessToken.setToken(null);
-    } catch {
-        throw new Error("Ошибка при выходе с аккаунта!");
+    } catch (error){
+        throw error;
     }
 }
 
 export const resetPassword = async (params: PasswordRequest): Promise<void> => {
     try {
         const response = await authApi.put('/user/profile/reset-password', params);
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при сбросе пароля!");
+        return response.data;
+    } catch (error){
+        throw error;
     }
 }
 
@@ -92,10 +92,10 @@ export const refreshToken = async (token: RefreshToken): Promise<Token> => {
             localStorage.setItem('refresh_token', response.data.refreshToken);
             accessToken.setToken(response.data.accessToken);
         }
-        return await response.data;
-    } catch {
+        return response.data;
+    } catch (error){
         localStorage.removeItem('refresh_token');
         accessToken.setToken(null);
-        throw new Error("Ошибка при обновлении токена!");
+        throw error;
     }
 }

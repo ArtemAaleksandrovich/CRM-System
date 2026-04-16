@@ -1,27 +1,27 @@
 import { useState, useEffect } from "react";
 import { Button, Checkbox, Flex, Modal, Typography } from "antd";
-import { Roles } from "../../types/admin/types.ts";
+import { Role } from "../../types/admin/types.ts";
 
 const { Text } = Typography;
 
 interface ModalProps {
-    openUpdateRolesUserModal: boolean;
+    isOpenUpdateRolesUserModal: boolean;
     handleCancelUpdateRolesUser: () => void;
-    confirmLoading: boolean;
-    confirmUpdateRolesUser: (roles: Roles[]) => Promise<void>;
-    roles: Roles[];
+    isConfirmLoading: boolean;
+    confirmUpdateRolesUser: (roles: Role[]) => Promise<void>;
+    roles: Role[];
 }
 
-export function ConfirmUpdateRolesUserModal({openUpdateRolesUserModal, handleCancelUpdateRolesUser, confirmLoading, confirmUpdateRolesUser, roles}: ModalProps) {
-    const [selectedRoles, setSelectedRoles] = useState<Roles[]>([]);
+export function ConfirmUpdateRolesUserModal({isOpenUpdateRolesUserModal, handleCancelUpdateRolesUser, isConfirmLoading, confirmUpdateRolesUser, roles}: ModalProps) {
+    const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
     const [isConfirmVisible, setIsConfirmVisible] = useState(false);
 
     useEffect(() => {
-        if (openUpdateRolesUserModal) {
+        if (isOpenUpdateRolesUserModal) {
             setSelectedRoles(roles || []);
             setIsConfirmVisible(false);
         }
-    }, [openUpdateRolesUserModal, roles]);
+    }, [isOpenUpdateRolesUserModal, roles]);
 
     const handleContinue = () => {
         setIsConfirmVisible(true);
@@ -41,9 +41,9 @@ export function ConfirmUpdateRolesUserModal({openUpdateRolesUserModal, handleCan
             <Modal
                 title="Изменение прав пользователя"
                 centered
-                open={openUpdateRolesUserModal && !isConfirmVisible}
+                open={isOpenUpdateRolesUserModal && !isConfirmVisible}
                 onCancel={handleCancelUpdateRolesUser}
-                confirmLoading={confirmLoading}
+                confirmLoading={isConfirmLoading}
                 footer={
                     <>
                         <Button onClick={handleCancelUpdateRolesUser}>Отмена</Button>
@@ -63,9 +63,9 @@ export function ConfirmUpdateRolesUserModal({openUpdateRolesUserModal, handleCan
                     </Text>
                     <Checkbox.Group
                         options={[
-                            { label: "Admin", value: Roles.ADMIN },
-                            { label: "Moderator", value: Roles.MODERATOR },
-                            { label: "User", value: Roles.USER },
+                            { label: "Admin", value: Role.ADMIN },
+                            { label: "Moderator", value: Role.MODERATOR },
+                            { label: "User", value: Role.USER },
                         ]}
                         value={selectedRoles}
                         onChange={(checkedValues) => setSelectedRoles(checkedValues)}
@@ -79,7 +79,7 @@ export function ConfirmUpdateRolesUserModal({openUpdateRolesUserModal, handleCan
                 open={isConfirmVisible}
                 onCancel={handleCancelConfirm}
                 onOk={handleFinalConfirm}
-                confirmLoading={confirmLoading}
+                confirmLoading={isConfirmLoading}
                 okText="Да, изменить"
                 cancelText="Отмена"
                 okButtonProps={{ danger: true }}

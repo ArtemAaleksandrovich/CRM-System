@@ -80,7 +80,7 @@ function TodoListPage() {
                 <Title style={{fontSize: 50, fontFamily: 'Roboto sans, sans-serif'}}> TODO List </Title>
                 <AddTodo getTodos={getTodos} />
                 <TodoTabs setTodoFilter={setTodoFilter} todoInfo={todoInfo} />
-                <TodoList todos={todos} getTodos={getTodos} loading={isLoading} />
+                <TodoList todos={todos} getTodos={getTodos} isLoading={isLoading} />
             </Layout>
         </>
     )

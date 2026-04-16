@@ -20,34 +20,34 @@ export const getTodosByFilter = async (status: TodosFilter): Promise<MetaRespons
         const response = await api.get('', {
             params: {filter: status}
         });
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при получении задач с БД");
+        return response.data;
+    } catch (error){
+        throw error;
     }
 }
 
 export const createTodo = async (params: TodoRequest): Promise<Todo> => {
     try {
         const response = await api.post('', params)
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при создании задачи");
+        return response.data;
+    } catch (error){
+        throw error;
     }
 }
 
 export const updateTodo = async ({id, title, isDone}: Todo): Promise<Todo> => {
     try {
         const response = await api.put(`/${id}`, {title, isDone})
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при обновлении задачи");
+        return response.data;
+    } catch (error){
+        throw error;
     }
 }
 
 export const deleteTodo = async (id: number): Promise<void> => {
     try {
         await api.delete(`/${id}`)
-    } catch {
-        throw new Error("Ошибка при удалении задачи");
+    } catch (error) {
+        throw error;
     }
 }

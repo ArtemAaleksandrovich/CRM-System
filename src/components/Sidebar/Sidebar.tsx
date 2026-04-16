@@ -22,22 +22,14 @@ const Sidebar = () => {
     const location = useLocation();
     const currentPath = location.pathname;
 
-    function checkingRights() {
-        if (roles.includes("MODERATOR") || roles.includes("ADMIN")) {
-            return [
-                { label: <Link to="/">TODO List</Link>, key: '/', icon: <AppstoreAddOutlined /> },
-                { label: <Link to="/profile">Profile</Link>, key: '/profile', icon: <UserOutlined /> },
-                { label: <Link to="/users">Users</Link>, key: '/users', icon: <TeamOutlined /> },
-            ]
-        } else {
-            return [
-                { label: <Link to="/">TODO List</Link>, key: '/', icon: <AppstoreAddOutlined /> },
-                { label: <Link to="/profile">Profile</Link>, key: '/profile', icon: <UserOutlined /> },
-            ]
-        }
-    }
+    const items: MenuItem[] = [
+        { label: <Link to="/">TODO List</Link>, key: '/', icon: <AppstoreAddOutlined /> },
+        { label: <Link to="/profile">Profile</Link>, key: '/profile', icon: <UserOutlined /> },
+    ]
 
-    const items: MenuItem[] = checkingRights()
+    if (roles.includes("MODERATOR") || roles.includes("ADMIN")) {
+        items.push({ label: <Link to="/users">Users</Link>, key: '/users', icon: <TeamOutlined /> })
+    }
 
     return (
         <Layout style={{ height: '100vh' }}>

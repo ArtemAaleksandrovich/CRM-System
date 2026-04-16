@@ -14,7 +14,7 @@ export interface User {
     email: string;
     date: string; // ISO date string
     isBlocked: boolean;
-    roles: Roles[];
+    roles: Role[];
     phoneNumber: string;
 }
 
@@ -29,7 +29,7 @@ export interface MetaResponse<T> {
 }
 // Интерфейс для обновления прав пользователя
 export interface UserRolesRequest {
-    roles: Roles[]  // при вызове этой апи роли будут обновлены к тому массиву который будет передан
+    roles: Role[]  // при вызове этой апи роли будут обновлены к тому массиву который будет передан
 // например если у вас была roles: ['ADMIN'] а вы хотите добавить ['MODERATOR'] то нужно передавать
 // старые + новые - roles: ['ADMIN', 'MODERATOR']
 }
@@ -41,7 +41,7 @@ export interface UserRequest{
     phoneNumber?: string;
 }
 
-export enum Roles {
+export enum Role {
     ADMIN = "ADMIN",
     MODERATOR = "MODERATOR",
     USER = "USER"

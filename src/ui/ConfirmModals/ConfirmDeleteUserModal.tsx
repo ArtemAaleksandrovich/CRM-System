@@ -1,31 +1,20 @@
-import {Button, Modal} from "antd";
+import {ConfirmModal} from "./ConfirmModal.tsx";
 
-interface ModalProps {
-    openDeleteUserModal: boolean,
+interface DeleteModalProps {
+    isOpenDeleteUserModal: boolean,
     handleCancelDeleteUser(): void,
-    confirmLoading: boolean,
+    isConfirmLoading: boolean,
     confirmDeleteUser(): Promise<void>
 }
 
-export function ConfirmDeleteUserModal({openDeleteUserModal, handleCancelDeleteUser, confirmLoading, confirmDeleteUser}: ModalProps) {
-
-    return <Modal
+export function ConfirmDeleteUserModal(props: DeleteModalProps) {
+    return <ConfirmModal
+        isOpen={props.isOpenDeleteUserModal}
         title="Подтверждение удаления пользователя"
-        centered
-        open={openDeleteUserModal}
-        footer={
-            <>
-                <Button type="default" onClick={handleCancelDeleteUser}>
-                    Отмена
-                </Button>
-                <Button danger loading={confirmLoading} onClick={confirmDeleteUser} form="profileForm">
-                    Подтвердить удаление
-                </Button>
-            </>
-        }
-        confirmLoading={confirmLoading}
-        onCancel={handleCancelDeleteUser}
-    >
-        Вы уверены, что хотите удалить пользователя? Отменить действие будет невозможно!
-    </Modal>
+        children="Вы уверены, что хотите удалить пользователя? Отменить действие будет невозможно!"
+        confirmText="Подтвердить удаление"
+        isConfirmLoading={props.isConfirmLoading}
+        onCancel={props.handleCancelDeleteUser}
+        onConfirm={props.confirmDeleteUser}
+    />
 }

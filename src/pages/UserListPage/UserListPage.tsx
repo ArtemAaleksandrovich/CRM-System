@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store.ts";
 import { type NavigateFunction, useNavigate } from "react-router-dom";
 import { blockUser, deleteUser, getUsersByFilter, unblockUser, updateUserRights } from "../../api/admin/api.ts";
-import { Roles, type User, type UserFilters} from "../../types/admin/types.ts";
+import { Role, type User, type UserFilters} from "../../types/admin/types.ts";
 import { fetchProfile } from "../../utils/fetchProfile.ts";
 import type { Profile } from "../../types/auth/types.ts";
 import { ConfirmDeleteUserModal } from "../../ui/ConfirmModals/ConfirmDeleteUserModal.tsx";
@@ -39,18 +39,18 @@ function UserListPage() {
     const [profile, setProfile] = useState<Profile | null>(null)
     const [api, contextHolder] = notification.useNotification();
 
-    const [selectedRoles, setSelectedRoles] = useState<Roles[]>([]);
+    const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
     const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
     const navigate: NavigateFunction = useNavigate();
 
-    const [openDeleteUserModal, setOpenDeleteUserModal] = useState<boolean>(false);
-    const [openBlockUserModal, setOpenBlockUserModal] = useState<boolean>(false);
-    const [openUnblockUserModal, setOpenUnblockUserModal] = useState<boolean>(false);
-    const [openUpdateRolesUserModal, setOpenUpdateRolesUserModal] = useState<boolean>(false);
+    const [isOpenDeleteUserModal, setIsOpenDeleteUserModal] = useState<boolean>(false);
+    const [isOpenBlockUserModal, setIsOpenBlockUserModal] = useState<boolean>(false);
+    const [isOpenUnblockUserModal, setIsOpenUnblockUserModal] = useState<boolean>(false);
+    const [isOpenUpdateRolesUserModal, setIsOpenUpdateRolesUserModal] = useState<boolean>(false);
 
-    const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [isConfirmLoading, setIsConfirmLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const [filtersConfig, setFiltersConfig] = useState<UserFilters>({});
     const [sorterState, setSorterState] = useState<{
@@ -76,7 +76,7 @@ function UserListPage() {
     }, [isAuthenticated, filtersConfig]);
 
     const getUsers: (filtersConfig: UserFilters) => Promise<void> = async () => {
-        setLoading(true);
+        setIsLoading(true);
         try {
             const response = await getUsersByFilter(filtersConfig)
             setUsers(response.data);
@@ -94,17 +94,17 @@ function UserListPage() {
                 });
             }
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
     }
 
     const confirmDeleteUser = async () => {
         if (!currentUserId) return;
-        setConfirmLoading(true);
+        setIsConfirmLoading(true);
         try {
             await deleteUser(currentUserId);
             getUsers(filtersConfig);
-            setOpenDeleteUserModal(false);
+            setIsOpenDeleteUserModal(false);
         } catch (error) {
             if (error instanceof Error) {
                 api['error']({
@@ -118,17 +118,17 @@ function UserListPage() {
                 });
             }
         } finally {
-            setConfirmLoading(false);
+            setIsConfirmLoading(false);
         }
     }
 
     const confirmBlockUser = async () => {
         if (!currentUserId) return;
-        setConfirmLoading(true);
+        setIsConfirmLoading(true);
         try {
             await blockUser(currentUserId);
             getUsers(filtersConfig);
-            setOpenBlockUserModal(false);
+            setIsOpenBlockUserModal(false);
         } catch (error) {
             if (error instanceof Error) {
                 api['error']({
@@ -142,17 +142,17 @@ function UserListPage() {
                 });
             }
         } finally {
-            setConfirmLoading(false);
+            setIsConfirmLoading(false);
         }
     }
 
     const confirmUnblockUser = async () => {
         if (!currentUserId) return;
-        setConfirmLoading(true);
+        setIsConfirmLoading(true);
         try {
             await unblockUser(currentUserId);
             getUsers(filtersConfig);
-            setOpenUnblockUserModal(false);
+            setIsOpenUnblockUserModal(false);
         } catch (error) {
             if (error instanceof Error) {
                 api['error']({
@@ -166,17 +166,17 @@ function UserListPage() {
                 });
             }
         } finally {
-            setConfirmLoading(false);
+            setIsConfirmLoading(false);
         }
     }
 
-    const confirmUpdateRolesUser = async (roles: Roles[]) => {
+    const confirmUpdateRolesUser = async (roles: Role[]) => {
         if (!currentUserId) return;
-        setConfirmLoading(true);
+        setIsConfirmLoading(true);
         try {
             await updateUserRights(currentUserId, { roles: roles });
             getUsers(filtersConfig);
-            setOpenUpdateRolesUserModal(false);
+            setIsOpenUpdateRolesUserModal(false);
         } catch (error) {
             if (error instanceof Error) {
                 api['error']({
@@ -190,24 +190,24 @@ function UserListPage() {
                 });
             }
         } finally {
-            setConfirmLoading(false);
+            setIsConfirmLoading(false);
         }
     }
 
     const handleCancelDeleteUser = () => {
-        setOpenDeleteUserModal(false);
+        setIsOpenDeleteUserModal(false);
     };
 
     const handleCancelBlockUser = () => {
-        setOpenBlockUserModal(false);
+        setIsOpenBlockUserModal(false);
     };
 
     const handleCancelUnblockUser = () => {
-        setOpenUnblockUserModal(false);
+        setIsOpenUnblockUserModal(false);
     };
 
     const handleCancelUpdateRolesUser = () => {
-        setOpenUpdateRolesUserModal(false);
+        setIsOpenUpdateRolesUserModal(false);
     };
 
     const handleGlobalSearch = (value: string) => {
@@ -344,7 +344,7 @@ function UserListPage() {
             width: 200,
             key: 'action',
             render: (_, record) => {
-                const isAvailableRole: boolean = (!profile?.roles.includes(Roles.ADMIN) && !profile?.roles.includes(Roles.MODERATOR))
+                const isAvailableRole: boolean = (!profile?.roles.includes(Role.ADMIN) && !profile?.roles.includes(Role.MODERATOR))
                 const items: MenuProps['items'] = [
                     {
                         key: '1',
@@ -364,7 +364,7 @@ function UserListPage() {
                                 disabled={record.isBlocked || isAvailableRole}
                                 onClick={() => {
                                     setCurrentUserId(record.id);
-                                    setOpenBlockUserModal(true);
+                                    setIsOpenBlockUserModal(true);
                                 }}
                             >
                                 Заблокировать
@@ -379,7 +379,7 @@ function UserListPage() {
                                 disabled={!record.isBlocked || isAvailableRole}
                                 onClick={() => {
                                     setCurrentUserId(record.id);
-                                    setOpenUnblockUserModal(true);
+                                    setIsOpenUnblockUserModal(true);
                                 }}
                             >
                                 Разблокировать
@@ -390,11 +390,11 @@ function UserListPage() {
                         key: '4',
                         label: (
                             <Button
-                                disabled={!profile?.roles.includes(Roles.ADMIN)}
+                                disabled={!profile?.roles.includes(Role.ADMIN)}
                                 onClick={() => {
                                     setCurrentUserId(record.id);
                                     setSelectedRoles(record.roles || []);
-                                    setOpenUpdateRolesUserModal(true);
+                                    setIsOpenUpdateRolesUserModal(true);
                                 }}
                             >
                                 Изменить роли
@@ -409,7 +409,7 @@ function UserListPage() {
                                 disabled={isAvailableRole}
                                 onClick={() => {
                                     setCurrentUserId(record.id);
-                                    setOpenDeleteUserModal(true);
+                                    setIsOpenDeleteUserModal(true);
                                 }}
                             >
                                 Удалить
@@ -471,7 +471,7 @@ function UserListPage() {
                 {contextHolder}
                 <ConfigProvider theme={theme}>
                     <Title level={1}>Users</Title>
-                    {loading ? (
+                    {isLoading ? (
                         <Layout style={{ height: "250px", justifyContent: "center" }}>
                             <Spin size="large" />
                         </Layout>
@@ -508,30 +508,30 @@ function UserListPage() {
             </Layout>
 
             <ConfirmDeleteUserModal
-                openDeleteUserModal={openDeleteUserModal}
+                isOpenDeleteUserModal={isOpenDeleteUserModal}
                 confirmDeleteUser={confirmDeleteUser}
-                confirmLoading={confirmLoading}
+                isConfirmLoading={isConfirmLoading}
                 handleCancelDeleteUser={handleCancelDeleteUser}
             />
 
             <ConfirmBlockUserModal
-                openBlockUserModal={openBlockUserModal}
+                isOpenBlockUserModal={isOpenBlockUserModal}
                 confirmBlockUser={confirmBlockUser}
-                confirmLoading={confirmLoading}
+                isConfirmLoading={isConfirmLoading}
                 handleCancelBlockUser={handleCancelBlockUser}
             />
 
             <ConfirmUnblockUserModal
-                openUnblockUserModal={openUnblockUserModal}
+                isOpenUnblockUserModal={isOpenUnblockUserModal}
                 confirmUnblockUser={confirmUnblockUser}
-                confirmLoading={confirmLoading}
+                isConfirmLoading={isConfirmLoading}
                 handleCancelUnblockUser={handleCancelUnblockUser}
             />
 
             <ConfirmUpdateRolesUserModal
-                openUpdateRolesUserModal={openUpdateRolesUserModal}
+                isOpenUpdateRolesUserModal={isOpenUpdateRolesUserModal}
                 handleCancelUpdateRolesUser={handleCancelUpdateRolesUser}
-                confirmLoading={confirmLoading}
+                isConfirmLoading={isConfirmLoading}
                 confirmUpdateRolesUser={confirmUpdateRolesUser}
                 roles={selectedRoles}
             />

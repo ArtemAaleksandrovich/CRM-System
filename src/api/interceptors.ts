@@ -24,7 +24,7 @@ export const setupCommonInterceptors = (axiosInstance: AxiosInstance) => {
                 }
             } catch (error) {
                 store.dispatch(authActions.logout())
-                throw new Error("Ошибка в интерцепторе!");
+                throw error;
             }
         }
     })

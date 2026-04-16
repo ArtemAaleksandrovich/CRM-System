@@ -14,12 +14,7 @@ import {type NavigateFunction, useNavigate, useParams} from "react-router-dom";
 import {getUserById, updateUserData} from "../../api/admin/api.ts";
 import {MAX_LENGTH_USERNAME, MIN_LENGTH_USERNAME} from "../../constants/constants.ts";
 import {useForm} from "antd/lib/form/Form";
-
-interface User {
-    username: string;
-    email: string;
-    phoneNumber: string;
-}
+import type {User} from "../../types/admin/types.ts";
 
 const { Title } = Typography;
 
@@ -43,8 +38,8 @@ function OwnProfilePage() {
     const navigate: NavigateFunction = useNavigate();
     const { id } = useParams();
     const [form] = useForm();
-    const [open, setOpen] = useState<boolean>(false);
-    const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [isConfirmLoading, setIsConfirmLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -74,17 +69,17 @@ function OwnProfilePage() {
     }
 
     const onFinishUpdateUserData: FormProps<User>['onFinish'] = async (values) => {
-        setConfirmLoading(true);
+        setIsConfirmLoading(true);
         try {
             await updateUserData(Number(id), { username: values.username, email: values.email, phoneNumber: values.phoneNumber })
             getUser(Number(id))
-            setOpen(false)
+            setIsOpen(false)
             form.resetFields()
         } catch(error) {
             if (error instanceof Error) {
                 api['error']({
                     title: 'Ошибка!',
-                    description: error.message + '! Вероятно, почта уже используется!',
+                    description: 'Вероятно, почта уже используется!' + error.message,
                 });
             } else {
                 api['error']({
@@ -93,12 +88,12 @@ function OwnProfilePage() {
                 });
             }
         } finally {
-            setConfirmLoading(false)
+            setIsConfirmLoading(false)
         }
     }
 
     const handleCancelUpdateUserData = () => {
-        setOpen(false)
+        setIsOpen(false)
         form.resetFields()
     };
 
@@ -133,7 +128,7 @@ function OwnProfilePage() {
                             size={5}
                             orientation="vertical"
                         >
-                            <Button type="primary" style={{width: 300}} onClick={() => setOpen(true)}>
+                            <Button type="primary" style={{width: 300}} onClick={() => setIsOpen(true)}>
                                 Редактировать профиль
                             </Button>
                             <Button type="default" style={{width: 300}} onClick={() => navigate("/users")}>
@@ -146,18 +141,18 @@ function OwnProfilePage() {
             <Modal
                 title="Редактирование профиля"
                 centered
-                open={open}
+                open={isOpen}
                 footer={
                     <>
                         <Button danger onClick={handleCancelUpdateUserData}>
                             Отмена
                         </Button>
-                        <Button type="primary" loading={confirmLoading} htmlType="submit" form="profileForm">
+                        <Button type="primary" loading={isConfirmLoading} htmlType="submit" form="profileForm">
                             Подтвердить изменения
                         </Button>
                     </>
                 }
-                confirmLoading={confirmLoading}
+                confirmLoading={isConfirmLoading}
                 onCancel={handleCancelUpdateUserData}
             >
                 <Form
