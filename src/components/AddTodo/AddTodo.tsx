@@ -1,8 +1,8 @@
 import { type FormProps} from 'antd';
 import { Button, Form, Input, notification  } from 'antd';
 
-import {createTodo} from "../../api/todos/api.ts";
-import {MAX_LENGTH_TODOS, MIN_LENGTH_TODOS} from "../../constants/constants.ts";
+import {createTodo} from "../../api/api.ts";
+import {MAX_LENGTH, MIN_LENGTH} from "../../constants/constants.ts";
 import {useState} from "react";
 
 interface AddTodoProps {
@@ -18,7 +18,7 @@ const AddTodo = ({getTodos}: AddTodoProps) => {
     const [api, contextHolder] = notification.useNotification();
     const [loading, setLoading] = useState<boolean>(false);
 
-    const onFinishAddTodo: FormProps<FieldType>['onFinish'] = async (values: FieldType) => {
+    const onFinish: FormProps<FieldType>['onFinish'] = async (values: FieldType) => {
         setLoading(true);
         try {
             await createTodo({title: values.title, isDone: false})
@@ -41,13 +41,15 @@ const AddTodo = ({getTodos}: AddTodoProps) => {
         }
     };
 
+
+
     return (
         <>
             {contextHolder}
             <Form
                 layout={'inline'}
                 form={form}
-                onFinish={onFinishAddTodo}
+                onFinish={onFinish}
             >
                 <Form.Item<FieldType>
                     name="title"
@@ -59,8 +61,8 @@ const AddTodo = ({getTodos}: AddTodoProps) => {
                             return Promise.resolve()
                         }},
                         {
-                            min: MIN_LENGTH_TODOS,
-                            max: MAX_LENGTH_TODOS,
+                            min: MIN_LENGTH,
+                            max: MAX_LENGTH,
                             message: 'Текст должен быть от 2 до 64 символов'
                         }
                     ]}

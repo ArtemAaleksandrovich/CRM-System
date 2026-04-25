@@ -2,12 +2,9 @@ import AddTodo from '../../components/AddTodo/AddTodo.tsx'
 import TodoTabs from '../../components/TodoTabs/TodoTabs.tsx'
 import TodoList from '../../components/TodoList/TodoList.tsx'
 import {useCallback, useEffect, useRef, useState} from "react";
-import {getTodosByFilter} from '../../api/todos/api.ts'
-import {type Todo, type TodoInfo, TodosFilter} from '../../types/todos/types.ts'
+import {getTodosByFilter} from '../../api/api.ts'
+import {type Todo, type TodoInfo, TodosFilter} from '../../api/types.ts'
 import {Layout, notification, Typography} from "antd";
-import {useSelector} from "react-redux";
-import type {RootState} from "../../store/store.ts";
-import {type NavigateFunction, useNavigate} from "react-router-dom";
 
 const { Title } = Typography;
 
@@ -17,9 +14,7 @@ function TodoListPage() {
     const [todoFilter, setTodoFilter] = useState<TodosFilter>(TodosFilter.ALL)
     const [todoInfo, setTodoInfo] = useState<TodoInfo>({all: 0, inWork: 0, completed: 0})
     const [api, contextHolder] = notification.useNotification();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const isAuthenticated: boolean = useSelector((state:RootState) => state.auth.isAuthenticated);
-    const navigate: NavigateFunction = useNavigate();
+
     const todosRef = useRef<Todo[]>([])
 
     useEffect(() => {
@@ -27,14 +22,10 @@ function TodoListPage() {
     }, [todos]);
 
     useEffect(() => {
-        if (isAuthenticated) {
-            getTodos()
-        } else {
-            navigate("/auth");
-        }
+        getTodos()
         const interval = setInterval(getTodos, 5000);
         return () => {clearInterval(interval)}
-    }, [todoFilter, isAuthenticated]);
+    }, [todoFilter]);
 
     function compare(a: Todo[], b: Todo[]) {
         return JSON.stringify(a) === JSON.stringify(b);
@@ -59,8 +50,6 @@ function TodoListPage() {
                     description: "Неизвестная ошибка при обновлении страницы! " + error,
                 });
             }
-        } finally {
-            setIsLoading(false);
         }
     }, [todoFilter])
 
@@ -80,7 +69,7 @@ function TodoListPage() {
                 <Title style={{fontSize: 50, fontFamily: 'Roboto sans, sans-serif'}}> TODO List </Title>
                 <AddTodo getTodos={getTodos} />
                 <TodoTabs setTodoFilter={setTodoFilter} todoInfo={todoInfo} />
-                <TodoList todos={todos} getTodos={getTodos} isLoading={isLoading} />
+                <TodoList todos={todos} getTodos={getTodos}/>
             </Layout>
         </>
     )
