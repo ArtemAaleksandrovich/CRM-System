@@ -7,7 +7,7 @@ import type {
     TodosFilter,
 } from '../../types/todos/types.ts'
 
-const BASE_URL = 'https://easydev.club/api/v1';
+const BASE_URL = 'https://easydev.club/api/v1/todos';
 
 const api = axios.create(
     {
@@ -17,37 +17,37 @@ const api = axios.create(
 
 export const getTodosByFilter = async (status: TodosFilter): Promise<MetaResponse<Todo, TodoInfo>> => {
     try {
-        const response = await api.get('/todos', {
+        const response = await api.get('', {
             params: {filter: status}
         });
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при получении задач с БД");
+        return response.data;
+    } catch (error){
+        throw error;
     }
 }
 
 export const createTodo = async (params: TodoRequest): Promise<Todo> => {
     try {
-        const response = await api.post('/todos', params)
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при создании задачи");
+        const response = await api.post('', params)
+        return response.data;
+    } catch (error){
+        throw error;
     }
 }
 
 export const updateTodo = async ({id, title, isDone}: Todo): Promise<Todo> => {
     try {
-        const response = await api.put(`/todos/${id}`, {title, isDone})
-        return await response.data;
-    } catch {
-        throw new Error("Ошибка при обновлении задачи");
+        const response = await api.put(`/${id}`, {title, isDone})
+        return response.data;
+    } catch (error){
+        throw error;
     }
 }
 
 export const deleteTodo = async (id: number): Promise<void> => {
     try {
-        await api.delete(`/todos/${id}`)
-    } catch {
-        throw new Error("Ошибка при удалении задачи");
+        await api.delete(`/${id}`)
+    } catch (error) {
+        throw error;
     }
 }

@@ -8,17 +8,13 @@ import {
     Typography,
 } from "antd";
 import {useEffect, useState} from "react";
-import {getProfile, logOut} from "../../api/auth/api.ts";
+import {logOut} from "../../api/auth/api.ts";
 import {useDispatch, useSelector} from "react-redux";
 import {authActions} from "../../store/slices/authSlice/authSlice.ts";
 import type {AppDispatch, RootState} from "../../store/store.ts";
 import {type NavigateFunction, useNavigate} from "react-router-dom";
-
-interface User {
-    username: string;
-    email: string;
-    phoneNumber: string;
-}
+import type {Profile} from "../../types/auth/types.ts";
+import {fetchProfile} from "../../utils/fetchProfile.ts";
 
 const { Title } = Typography;
 
@@ -35,9 +31,9 @@ const layoutStyle = {
     height: '100vh',
     overflow: 'auto',
 };
-function ProfilePage() {
+function OwnProfilePage() {
     const [isExitLoading, setIsExitLoading] = useState<boolean>(false);
-    const [user, setUser] = useState<User | null>(null)
+    const [profile, setProfile] = useState<Profile | null>(null)
     const dispatch: AppDispatch = useDispatch();
     const [api, contextHolder] = notification.useNotification();
     const isAuthenticated: boolean = useSelector((state:RootState) => state.auth.isAuthenticated);
@@ -45,30 +41,11 @@ function ProfilePage() {
 
     useEffect(() => {
         if (isAuthenticated) {
-            getUser()
+            fetchProfile(setProfile, api)
         } else {
             navigate("/auth");
         }
-    }, []);
-
-    const getUser: () => Promise<void> = async () => {
-        try {
-            const response = await getProfile()
-            setUser(response);
-        } catch(error) {
-            if (error instanceof Error) {
-                api['error']({
-                    title: 'Ошибка!',
-                    description: "Ошибка при получении данных профиля! " + error.message,
-                });
-            } else {
-                api['error']({
-                    title: 'Ошибка!',
-                    description: "Неизвестная ошибка при получении данных профиля! " + error,
-                });
-            }
-        }
-    }
+    }, [isAuthenticated]);
 
     const handleLogout = async () => {
         setIsExitLoading(true)
@@ -102,14 +79,14 @@ function ProfilePage() {
                 >
                     <Title level={1}> Profile </Title>
                     {
-                        user ?
+                        profile ?
                         <Space
                             style={{ display: 'flex', alignItems: 'center'}}
                             orientation="vertical"
                         >
-                            <Title level={2}>Привет, {user.username}!</Title>
-                            <Title level={3}>Email: {user.email}</Title>
-                            <Title level={3}>Телефон: {user.phoneNumber ? user.phoneNumber : "не введён"}</Title>
+                            <Title level={2}>Привет, {profile.username}!</Title>
+                            <Title level={3}>Email: {profile.email}</Title>
+                            <Title level={3}>Телефон: {profile.phoneNumber ? profile.phoneNumber : "не введён"}</Title>
                         </Space>
                     :
 
@@ -133,4 +110,4 @@ function ProfilePage() {
         </Layout>
     )
 }
-export default ProfilePage;
+export default OwnProfilePage;
