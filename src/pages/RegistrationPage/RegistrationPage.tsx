@@ -52,7 +52,7 @@ const RegistrationPage = () => {
             if (error instanceof Error) {
                 api['error']({
                     title: 'Ошибка!',
-                    description: error.message + "Пользователь с таким логином или почтой уже существует!",
+                    description: "Пользователь с таким логином или почтой уже существует!",
                 });
             } else {
                 api['error']({
