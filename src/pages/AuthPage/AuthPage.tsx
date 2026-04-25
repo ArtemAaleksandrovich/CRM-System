@@ -39,7 +39,7 @@ const AuthPage = () => {
             if (error instanceof Error) {
                 api['error']({
                     title: 'Ошибка!',
-                    description: error.message,
+                    description: "Неверный логин или пароль!",
                 });
             } else {
                 api['error']({
