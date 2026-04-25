@@ -1,7 +1,7 @@
-import {Checkbox, Flex, type FormProps, Layout, notification, Space, Typography} from 'antd';
+import {type FormProps, Layout, notification, Space, Typography} from 'antd';
 import { Button, Form, Input } from 'antd';
 import {Link} from "react-router-dom";
-import {signIn} from "../../api/auth/api.ts";
+import {getProfile, signIn} from "../../api/auth/api.ts";
 import {
     UserOutlined,
     LockOutlined,
@@ -10,13 +10,8 @@ import {useState} from "react";
 import {authActions} from "../../store/slices/authSlice/authSlice.ts";
 import {useDispatch} from "react-redux";
 import type {AppDispatch} from "../../store/store.ts";
+import type {AuthData} from "../../types/auth/types.ts";
 const { Title } = Typography;
-
-type FieldType = {
-    login: string;
-    password: string;
-    remember?: string;
-};
 
 const layoutStyle = {
     backgroundColor: '#f1f7f9',
@@ -27,17 +22,19 @@ const layoutStyle = {
     justifyContent: 'center',
 };
 
-
 const AuthPage = () => {
     const dispatch: AppDispatch = useDispatch();
     const [api, contextHolder] = notification.useNotification();
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const onFinishAuth: FormProps<FieldType>['onFinish'] = async (values) => {
+    const onFinishAuth: FormProps<AuthData>['onFinish'] = async (values) => {
         setIsLoading(true);
         try {
             await signIn({login: values.login, password: values.password});
             dispatch(authActions.login())
+
+            const { roles } = await getProfile();
+            dispatch(authActions.setRoles(roles));
         } catch (error) {
             if (error instanceof Error) {
                 api['error']({
@@ -70,27 +67,19 @@ const AuthPage = () => {
                         initialValues={{remember: true}}
                         onFinish={onFinishAuth}
                     >
-                        <Form.Item<FieldType>
+                        <Form.Item<AuthData>
                             name="login"
                             rules={[{required: true, message: 'Введите логин!'}]}
                         >
                             <Input placeholder="Логин" addonBefore={<UserOutlined style={{ color: 'gray' }}/>}/>
                         </Form.Item>
 
-                        <Form.Item<FieldType>
+                        <Form.Item<AuthData>
                             name="password"
                             rules={[{required: true, message: 'Введите пароль!'}]}
                         >
                             <Input.Password placeholder="Пароль" addonBefore={<LockOutlined  style={{ color: 'gray' }}/>}/>
                         </Form.Item>
-
-                        <Flex gap={60}>
-                            <Form.Item<FieldType> name="remember" valuePropName="checked" label={null}
-                                                  style={{marginTop: '-4px'}}>
-                                <Checkbox>Remember me</Checkbox>
-                            </Form.Item>
-                            <Link to="/#">Forgot password?</Link>
-                        </Flex>
 
                         <Space size={40} orientation="horizontal">
                             <Button type="primary" style={{width: 300}} loading={isLoading} htmlType="submit">

@@ -5,6 +5,8 @@ import {type AppDispatch, type RootState} from './store/store.ts'
 import {authActions} from "./store/slices/authSlice/authSlice.ts";
 import {useEffect, useState} from "react";
 import {refreshToken} from "./api/auth/api.ts";
+import {jwtDecode} from 'jwt-decode';
+import type {Role} from "./types/auth/types.ts";
 
 function App() {
     const isAuthenticated: boolean = useSelector((state:RootState) => state.auth.isAuthenticated);
@@ -22,6 +24,8 @@ function App() {
                 const response = await refreshToken({refreshToken: token})
                 if (response) {
                     dispatch(authActions.setAuth(true))
+                    const payload = jwtDecode<{ isAdmin?: Role[] }>(response.accessToken);
+                    dispatch(authActions.setRoles(payload.isAdmin || []));
                 }
             } else {
                 dispatch(authActions.setAuth(false))

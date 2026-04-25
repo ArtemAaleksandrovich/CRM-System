@@ -7,16 +7,16 @@ import {memo} from "react";
 interface TodoListProps {
     getTodos(): void;
     todos: Todo[];
-    loading: boolean;
+    isLoading: boolean;
 }
 
-const TodoList = memo(({todos, getTodos, loading}: TodoListProps) => {
+const TodoList = memo(({todos, getTodos, isLoading}: TodoListProps) => {
     return (
         <Space
             orientation="vertical"
             size={10}
         >
-            {loading &&
+            {isLoading &&
                 <Flex justify={"center"} align={"center"} style={{height: "500px"}}>
                     <Spin size="large"/>
                 </Flex>
